@@ -1,6 +1,6 @@
 import {Body, Controller, Delete, Get, Inject, Param, Post, Put} from "@nestjs/common";
 import {PeopleService} from "./people.service";
-import {People} from "./model/people.model";
+import {CreatePeopleDto} from "./model/people.model";
 
 @Controller('people')
 export class PeopleController {
@@ -28,12 +28,12 @@ export class PeopleController {
     }
 
     @Post()
-    create(@Body() people: People) {
+    create(@Body() people: CreatePeopleDto) {
         this.peopleService.add(people)
     }
 
     @Put(':id')
-    update(@Param('id') id: number, @Body() people: People) {
+    update(@Param('id') id: number, @Body() people: CreatePeopleDto) {
         this.peopleService.update(id, people)
     }
 

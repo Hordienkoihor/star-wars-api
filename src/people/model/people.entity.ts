@@ -1,60 +1,57 @@
 import {IsArray, IsISO8601, IsNotEmpty, IsNumber, IsNumberString, IsString} from "class-validator";
 import {Type} from "class-transformer";
+import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
-export class CreatePeopleDto {
+@Entity()
+export class People {
+    @PrimaryGeneratedColumn()
+    id: number;
 
-    @IsString()
-    @IsNotEmpty()
+    @Column()
     name: string;
 
-    @IsNumberString()
-    // @Type(() => Number)
+    @Column()
     height: string;
 
-    @IsNumberString()
-    // @Type(() => Number)
+    @Column()
     mass: string;
 
-    @IsString()
+    @Column()
     hair_color: string;
 
-    @IsString()
+    @Column()
     skin_color: string;
 
-    @IsString()
+    @Column()
     eye_color: string;
 
-    @IsString()
+    @Column()
     birth_year: string;
 
-    @IsString()
+    @Column()
     gender: string;
 
-    @IsString()
+    @Column()
     homeworld: string;
 
-    @IsArray()
-    @IsString({each: true})
+    @Column({ type: 'json', nullable: true })
     films: string[];
 
-    @IsArray()
-    @IsString({each: true})
+    @Column({ type: 'json', nullable: true })
     species: string[];
 
-    @IsArray()
-    @IsString({each: true})
+    @Column({ type: 'json', nullable: true })
     vehicles: string[];
 
-    @IsArray()
-    @IsString({each: true})
+    @Column({ type: 'json', nullable: true })
     starships: string[];
 
-    @IsISO8601()
+    @Column()
     created: string;
 
-    @IsISO8601()
+    @Column()
     edited: string;
 
-    @IsString()
+    @Column()
     url: string
 }

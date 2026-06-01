@@ -1,36 +1,43 @@
 import {Inject, Injectable} from "@nestjs/common";
-import {PeopleRepository} from "./people.repository";
-import {People} from "./model/people.model";
+import {People} from "./model/people.entity";
+import {Repository} from "typeorm";
+import {CreatePeopleDto} from "./model/people.model";
 
 @Injectable()
 export class PeopleService {
-    constructor(private readonly peopleRepository: PeopleRepository) {
+    constructor(@Inject('PEOPLE_REPOSITORY') private readonly peopleRepository: Repository<People>) {
     }
 
-    add(people: People) {
-        this.peopleRepository.add(people);
+    async add(peopleDto: CreatePeopleDto) {
+        const person = this.peopleRepository.create(peopleDto)
+        return await this.peopleRepository.save(person)
     }
 
-    get(id: number) {
-        this.peopleRepository.get(id)
+    async get(id: number) {
+        return await this.peopleRepository.findOneBy({
+            id: id
+        })
     }
 
-    getAll() {
-        return this.peopleRepository.getAll()
+    async getAll() {
+        return await this.peopleRepository.find()
     }
 
-    getSinglePage(offset: number = 0, limit: number = 10) {
-        return this.peopleRepository.getInRange(offset, limit)
+    async getSinglePage(offset: number = 0, limit: number = 10) {
+        return await this.peopleRepository.find({
+            skip: offset,
+            take: limit,
+        })
     }
 
-    update(id: number, people: People) {
-        this.peopleRepository.update(id, people);
+    async update(id: number, people: CreatePeopleDto) {
+        await this.peopleRepository.update(id, people)
+        return this.get(id);
     }
 
-    delete(id: number) {
-        this.peopleRepository.delete(id)
+    async delete(id: number) {
+        await this.peopleRepository.delete({id})
     }
-
 
 
 }
