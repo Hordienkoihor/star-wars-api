@@ -58,6 +58,7 @@ export class PeopleService {
                             created: person.created,
                             edited: person.edited,
                             url: person.url,
+                            imgs: person.imgs || [],
                         }
 
                         await this.add(dto);

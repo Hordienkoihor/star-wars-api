@@ -57,7 +57,8 @@ export class PeopleController {
     async create(@Body() people: CreatePeopleDto, @UploadedFiles(
         new ParseFilePipeBuilder()
             .addFileTypeValidator({
-                fileType: /^image\/(png|jpeg)$/
+                fileType: /^image\/(png|jpeg)$/,
+                skipMagicNumbersValidation: true
             })
             .build({
                 errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
@@ -92,7 +93,8 @@ export class PeopleController {
     }))
     async manageImages(@Param('id') id: number, @UploadedFiles(new ParseFilePipeBuilder()
         .addFileTypeValidator({
-            fileType: /^image\/(png|jpeg)$/
+            fileType: /^image\/(png|jpeg)$/,
+            skipMagicNumbersValidation: true
         })
         .build({
             errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
