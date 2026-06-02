@@ -57,4 +57,8 @@ export class CreatePeopleDto {
 
     @IsString()
     url: string
+
+    @IsArray()
+    @IsString({each: true})
+    imgs: string[];
 }

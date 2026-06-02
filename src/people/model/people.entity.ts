@@ -54,4 +54,7 @@ export class People {
 
     @Column()
     url: string
+
+    @Column({ type: 'json', nullable: true })
+    imgs: string[];
 }
