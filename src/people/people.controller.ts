@@ -7,10 +7,10 @@ export class PeopleController {
     constructor(private readonly peopleService: PeopleService) {
     }
 
-    // @Get()
-    // async getForPageDef() {
-    //     return await this.peopleService.getSinglePage()
-    // }
+    @Get()
+    async getForPageDef() {
+        return await this.peopleService.getSinglePage()
+    }
 
     @Get()
     async getForPage(@Query('offset') offset: number, @Query('limit') limit: number) {
