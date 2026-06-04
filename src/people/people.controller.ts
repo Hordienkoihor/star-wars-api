@@ -1,13 +1,13 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete,
-    Get, HttpException, HttpStatus,
-    Inject, NotFoundException,
+    Get, HttpStatus, NotFoundException,
     Param, ParseFilePipeBuilder, Patch,
     Post,
     Put,
-    Query,
+    Query, Res, StreamableFile,
     UploadedFiles,
     UseInterceptors
 } from "@nestjs/common";
@@ -16,20 +16,24 @@ import {CreatePeopleDto} from "./model/people.model";
 import {FileInterceptor, FilesInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {extname} from 'path'
+import * as fsPromise from 'fs/promises'
+import type {Response} from "express";
+import * as Path from "node:path";
+import {createReadStream, existsSync} from 'fs'
 
 @Controller('people')
 export class PeopleController {
+    private readonly baseImagePath = './uploads'
+
     constructor(private readonly peopleService: PeopleService) {
     }
 
     @Get()
-    async getForPageDef() {
-        return await this.peopleService.getSinglePage()
-    }
-
-    @Get()
     async getForPage(@Query('offset') offset: number, @Query('limit') limit: number) {
-        return await this.peopleService.getSinglePage(offset, limit)
+        if (offset && limit) {
+            return await this.peopleService.getSinglePage(offset, limit)
+        }
+        return await this.peopleService.getSinglePage()
     }
 
     @Get('/all')
@@ -79,7 +83,7 @@ export class PeopleController {
         await this.peopleService.delete(id)
     }
 
-    @Patch(':id')
+    @Patch(':id/images')
     @UseInterceptors(FilesInterceptor('files', 10, {
         storage: diskStorage(
             {
@@ -91,7 +95,7 @@ export class PeopleController {
             }
         )
     }))
-    async manageImages(@Param('id') id: number, @UploadedFiles(new ParseFilePipeBuilder()
+    async appendImages(@Param('id') id: number, @UploadedFiles(new ParseFilePipeBuilder()
         .addFileTypeValidator({
             fileType: /^image\/(png|jpeg)$/,
             skipMagicNumbersValidation: true
@@ -112,5 +116,63 @@ export class PeopleController {
         await this.peopleService.update(id, person)
 
         return person;
+    }
+
+    @Delete(':id/images')
+    async removeImages(@Body() images: string[], @Param('id') id: number) {
+        const person = await this.peopleService.get(id)
+
+        if (!person) {
+            throw new NotFoundException('No such person found');
+        }
+
+
+        if (!person.imgs) {
+            throw new NotFoundException('Person object has not images property');
+        }
+
+        const containsInvalidImage = images.some(imageName => !person.imgs.includes(imageName));
+
+        if (containsInvalidImage) {
+            throw new BadRequestException(`Person ${person.name} does not have all images passed`);
+        }
+
+        person.imgs = person.imgs.filter(name => !images.includes(name));
+        await this.peopleService.update(id, person)
+
+
+        await Promise.all(images.map(async (image) => {
+                try {
+                    await fsPromise.unlink(Path.join(this.baseImagePath, image));
+                } catch (e) {
+                    console.error(e)
+                }
+            })
+        )
+        //todo connect to person object
+
+    }
+
+
+    @Get(':id/images/:name')
+    async getImage(@Param('id') id: number, @Param('name') image: string, @Res({passthrough: true}) res: Response) {
+        const person = await this.peopleService.get(id)
+
+        if (!person) {
+            throw new NotFoundException('No such person found');
+        }
+
+        if (!person.imgs || !person.imgs.includes(image)) {
+            throw new NotFoundException('No such image found');
+        }
+
+
+        if (!existsSync(Path.join(this.baseImagePath, image))) {
+            throw new NotFoundException('Image file is missing on server');
+        }
+
+        res.set('Content-Type', 'image/jpeg');
+        const fileStream = createReadStream(Path.join(this.baseImagePath, image))
+        return new StreamableFile(fileStream)
     }
 }
