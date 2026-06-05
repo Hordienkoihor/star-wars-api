@@ -20,6 +20,8 @@ import * as fsPromise from 'fs/promises'
 import type {Response} from "express";
 import * as Path from "node:path";
 import {createReadStream, existsSync} from 'fs'
+import {ImageValidationPipe} from "../pipes/ImageValidationPipe";
+import * as fs from "node:fs";
 
 @Controller('people')
 export class PeopleController {
@@ -66,7 +68,8 @@ export class PeopleController {
             })
             .build({
                 errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-            })
+            }),
+        ImageValidationPipe
     ) files: Array<Express.Multer.File>) {
 
         people.imgs = files?.map(file => file.filename) || [];
@@ -102,11 +105,16 @@ export class PeopleController {
         })
         .build({
             errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
-        })) files: Array<Express.Multer.File>) {
+        }), ImageValidationPipe
+    ) files: Array<Express.Multer.File>) {
 
         const person = await this.peopleService.get(id)
 
         if (!person) {
+            files?.forEach((file: Express.Multer.File) => {
+                fs.unlinkSync(file.path);
+            })
+
             throw new NotFoundException('No such person found');
         }
 
@@ -124,6 +132,7 @@ export class PeopleController {
 
         if (!person) {
             throw new NotFoundException('No such person found');
+
         }
 
 
@@ -149,8 +158,6 @@ export class PeopleController {
                 }
             })
         )
-        //todo connect to person object
-
     }
 
 
