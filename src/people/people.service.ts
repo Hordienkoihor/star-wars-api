@@ -1,7 +1,7 @@
 import {Inject, Injectable} from "@nestjs/common";
 import {People} from "./model/people.entity";
 import {Repository} from "typeorm";
-import {CreatePeopleDto} from "./model/people.model";
+import {CreatePeopleDto} from "./model/people.dto";
 import {HttpService} from "@nestjs/axios";
 import {firstValueFrom} from "rxjs";
 import * as https from "node:https";

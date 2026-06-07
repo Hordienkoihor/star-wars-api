@@ -12,7 +12,7 @@ import {
     UseInterceptors
 } from "@nestjs/common";
 import {PeopleService} from "./people.service";
-import {CreatePeopleDto} from "./model/people.model";
+import {CreatePeopleDto} from "./model/people.dto";
 import {FileInterceptor, FilesInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {extname} from 'path'

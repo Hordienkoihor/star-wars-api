@@ -91,4 +91,6 @@ export class CreatePeopleDto {
     @IsArray()
     @IsString({each: true})
     imgs: string[];
+
+
 }
