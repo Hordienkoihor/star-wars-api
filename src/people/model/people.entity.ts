@@ -1,5 +1,3 @@
-import {IsArray, IsISO8601, IsNotEmpty, IsNumber, IsNumberString, IsString} from "class-validator";
-import {Type} from "class-transformer";
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 
 @Entity()
@@ -11,10 +9,10 @@ export class People {
     name: string;
 
     @Column()
-    height: string;
+    height: number;
 
     @Column()
-    mass: string;
+    mass: number;
 
     @Column()
     hair_color: string;

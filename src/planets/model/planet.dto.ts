@@ -1,6 +1,7 @@
 import {ApiProperty} from "@nestjs/swagger";
 import {IsNotEmpty, IsNumberString, IsString} from "class-validator";
 import {Column} from "typeorm";
+import {Type} from "class-transformer";
 
 export class CreatePlanetDto {
 
@@ -12,27 +13,32 @@ export class CreatePlanetDto {
     @ApiProperty()
     @IsNumberString()
     @IsNotEmpty()
-    diameter: string;
+    @Type(() => Number)
+    diameter: number;
 
     @ApiProperty()
     @IsNumberString()
     @IsNotEmpty()
-    rotation_period: string;
+    @Type(() => Number)
+    rotation_period: number;
 
     @ApiProperty()
     @IsNumberString()
     @IsNotEmpty()
-    orbital_period: string;
+    @Type(() => Number)
+    orbital_period: number;
 
     @ApiProperty()
     @IsNumberString()
     @IsNotEmpty()
-    gravity: string;
+    @Type(() => Number)
+    gravity: number;
 
     @ApiProperty()
     @IsNumberString()
     @IsNotEmpty()
-    population: string;
+    @Type(() => Number)
+    population: number;
 
     @ApiProperty()
     @IsString()
@@ -47,12 +53,14 @@ export class CreatePlanetDto {
     @ApiProperty()
     @IsNumberString()
     @IsNotEmpty()
-    surface_water: string;
+    @Type(() => Number)
+    surface_water: number;
 
     @ApiProperty()
     @IsNumberString()
     @IsNotEmpty()
-    residents: string;
+    @Type(() => Number)
+    residents: number;
 
     @Column({ type: 'json', nullable: true })
     films: string[];
