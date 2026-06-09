@@ -12,12 +12,12 @@ export class CreatePeopleDto {
     @ApiProperty()
     @IsNumberString()
     @Type(() => Number)
-    height: string;
+    height: number;
 
     @ApiProperty()
     @IsNumberString()
     @Type(() => Number)
-    mass: string;
+    mass: number;
 
     @ApiProperty()
     @IsString()

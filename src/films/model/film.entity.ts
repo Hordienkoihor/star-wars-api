@@ -1,5 +1,6 @@
 import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
+import {IsArray, IsString} from "class-validator";
 
 @Entity()
 export class Film {
@@ -47,6 +48,8 @@ export class Film {
     @Column()
     edited: string;
 
-    @Column({type: 'json', nullable: true})
+    @ApiProperty()
+    @IsArray()
+    @IsString({each: true})
     imgs: string[];
 }

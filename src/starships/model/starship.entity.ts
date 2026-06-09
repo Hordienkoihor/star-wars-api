@@ -58,9 +58,6 @@ export class Starship {
     @Column()
     edited: string;
 
-    @Column()
-    url: string
-
-    @Column()
+    @Column({type: 'json', nullable: true})
     imgs: string[];
 }

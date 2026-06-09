@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {IsNotEmpty, IsNumberString, IsString} from "class-validator";
+import {IsArray, IsISO8601, IsNotEmpty, IsNumberString, IsString} from "class-validator";
 import {Column} from "typeorm";
 import {Type} from "class-transformer";
 
@@ -62,14 +62,21 @@ export class CreatePlanetDto {
     @Type(() => Number)
     residents: number;
 
-    @Column({ type: 'json', nullable: true })
+    @ApiProperty({
+        description: 'in future will be changed to id array',
+        type: [String],
+    })
+    @IsArray()
+    @IsString({each: true})
     films: string[];
 
 
-    @Column()
+    @ApiProperty()
+    @IsISO8601()
     created: string;
 
-    @Column()
+    @ApiProperty()
+    @IsISO8601()
     edited: string;
 
     @Column({ type: 'json', nullable: true })

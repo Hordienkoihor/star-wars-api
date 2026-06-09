@@ -103,10 +103,6 @@ export class CreateStarshipDto {
     edited: string;
 
     @ApiProperty()
-    @IsString()
-    url: string
-
-    @ApiProperty()
     @IsArray()
     @IsString({each: true})
     imgs: string[];
