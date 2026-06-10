@@ -105,7 +105,7 @@ export class PeopleService {
     }
 
     async delete(id: number) {
-        await this.peopleRepository.delete({id})
+        return await this.peopleRepository.delete({id})
     }
 
 

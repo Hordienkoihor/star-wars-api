@@ -6,7 +6,7 @@ import {IsArray, IsString} from "class-validator";
 export class Film {
 
     @PrimaryGeneratedColumn()
-    filmId: number;
+    id: number;
 
     @Column()
     title: string;

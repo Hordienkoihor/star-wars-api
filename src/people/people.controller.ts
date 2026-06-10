@@ -45,7 +45,7 @@ export class PeopleController {
 
     @Get(':id')
     async getOne(@Param('id') id: number) {
-        await this.peopleService.get(id)
+       return await this.peopleService.get(id)
     }
 
     @Post()
@@ -73,17 +73,17 @@ export class PeopleController {
     ) files: Array<Express.Multer.File>) {
 
         people.imgs = files?.map(file => file.filename) || [];
-        await this.peopleService.add(people)
+        return await this.peopleService.add(people)
     }
 
     @Put(':id')
     async update(@Param('id') id: number, @Body() people: CreatePeopleDto) {
-        await this.peopleService.update(id, people)
+        return await this.peopleService.update(id, people)
     }
 
     @Delete(':id')
     async delete(@Param('id') id: number) {
-        await this.peopleService.delete(id)
+        return await this.peopleService.delete(id)
     }
 
     @Patch(':id/images')

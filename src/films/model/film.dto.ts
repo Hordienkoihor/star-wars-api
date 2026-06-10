@@ -1,7 +1,7 @@
 import {ApiProperty} from "@nestjs/swagger";
 import {IsArray, IsISO8601, IsNotEmpty, IsNumber, IsString} from "class-validator";
 
-export class createFilmDto {
+export class CreateFilmDto {
 
     @ApiProperty()
     @IsString()
