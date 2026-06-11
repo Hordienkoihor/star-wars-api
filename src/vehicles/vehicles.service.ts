@@ -1,4 +1,51 @@
-import { Injectable } from '@nestjs/common';
+import {BadRequestException, Inject, Injectable} from '@nestjs/common';
+import {Repository} from "typeorm";
+import {HttpService} from "@nestjs/axios";
+import {CreateStarshipDto} from "../starships/model/starship.dto";
+import {Vehicle} from "./model/vehicle.entity";
+import {CreateVehicleDto} from "./model/vehicle.dto";
 
 @Injectable()
-export class VehiclesService {}
+export class VehiclesService {
+    constructor(@Inject('VEHICLES_REPOSITORY') private readonly vehiclesRepository: Repository<Vehicle>, private readonly httpService: HttpService) {
+    }
+
+    async add(vehicleDto: CreateVehicleDto) {
+        if (!vehicleDto) {
+            throw new BadRequestException("empty vehicle dto");
+        }
+
+        const vehicle = this.vehiclesRepository.create(vehicleDto);
+        return await this.vehiclesRepository.save(vehicle);
+    }
+
+    async get(id: number) {
+        return await this.vehiclesRepository.findOneBy({
+            id: id
+        })
+    }
+
+    async getAll() {
+        return await this.vehiclesRepository.find();
+    }
+
+    async getSinglePage(offset: number = 0, limit: number = 10) {
+        return await this.vehiclesRepository.find({
+            skip: offset,
+            take: limit,
+        })
+    }
+
+    async update(id: number, vehicleDto: CreateVehicleDto) {
+        if (!vehicleDto) {
+            throw new BadRequestException("empty vehicle dto");
+        }
+
+        await this.vehiclesRepository.update(id, vehicleDto);
+        return await this.vehiclesRepository.findOneBy({id: id})
+    }
+
+    async delete(id: number) {
+        return await this.vehiclesRepository.delete(id);
+    }
+}

@@ -13,7 +13,6 @@ import {
 import {FilesInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {extname} from "path";
-import {CreatePlanetDto} from "../planets/model/planet.dto";
 import {ImageValidationPipe} from "../pipes/ImageValidationPipe";
 import fs from "node:fs";
 import fsPromise from "fs/promises";
@@ -21,7 +20,7 @@ import Path from "node:path";
 import type {Response} from "express";
 import {createReadStream, existsSync} from "fs";
 import {SpeciesService} from "./species.service";
-import {CreateSpeciesDto} from "./model/species.dto";
+import {CreateStarshipDto} from "./model/species.dto";
 
 @Controller('species')
 export class SpeciesController {
@@ -60,7 +59,7 @@ export class SpeciesController {
             }
         )
     }))
-    async create(@Body() speciesDto: CreateSpeciesDto, @UploadedFiles(
+    async create(@Body() speciesDto: CreateStarshipDto, @UploadedFiles(
         new ParseFilePipeBuilder()
             .addFileTypeValidator({
                 fileType: /^image\/(png|jpeg)$/,
@@ -77,7 +76,7 @@ export class SpeciesController {
     }
 
     @Put(':id')
-    async update(@Param('id') id: number, @Body() speciesDto: CreateSpeciesDto) {
+    async update(@Param('id') id: number, @Body() speciesDto: CreateStarshipDto) {
         return await this.speciesService.update(id, speciesDto)
     }
 
