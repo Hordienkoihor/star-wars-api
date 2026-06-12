@@ -1,4 +1,6 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Film} from "../../films/model/film.entity";
+import {People} from "../../people/model/people.entity";
 
 @Entity()
 export class Species {
@@ -32,11 +34,11 @@ export class Species {
     @Column()
     homeworld: string;
 
-    @Column({type: 'json', nullable: true})
-    people: number[]
+    @ManyToMany(() => People, (people) => people.species)
+    people: People[];
 
-    @Column({type: 'json', nullable: true})
-    films: number[]
+    @ManyToMany(() => Film, (film) => film.species)
+    films: Film[]
 
     @Column()
     created: string;

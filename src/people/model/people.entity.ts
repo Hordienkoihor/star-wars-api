@@ -1,4 +1,8 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Film} from "../../films/model/film.entity";
+import {Species} from "../../species/model/species.entity";
+import {Vehicle} from "../../vehicles/model/vehicle.entity";
+import {Starship} from "../../starships/model/starship.entity";
 
 @Entity()
 export class People {
@@ -32,17 +36,20 @@ export class People {
     @Column()
     homeworld: string;
 
-    @Column({ type: 'json', nullable: true })
-    films: string[];
+    @ManyToMany(() => Film, (film) => film.characters)
+    films: Film[];
 
-    @Column({ type: 'json', nullable: true })
-    species: string[];
+    @ManyToMany(() => Species, (species) => species.people)
+    @JoinTable({name: 'person_species'})
+    species: Species[];
 
-    @Column({ type: 'json', nullable: true })
-    vehicles: string[];
+    @ManyToMany(() => Vehicle, (vehicle) => vehicle.pilots)
+    @JoinTable({name: 'person_vehicle'})
+    vehicles: Vehicle[];
 
-    @Column({ type: 'json', nullable: true })
-    starships: string[];
+    @ManyToMany(() => Starship, (starship) => starship.pilots)
+    @JoinTable({name: 'person_starship'})
+    starships: Starship[];
 
     @Column()
     created: string;

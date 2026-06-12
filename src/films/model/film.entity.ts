@@ -1,6 +1,11 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
 import {ApiProperty} from "@nestjs/swagger";
 import {IsArray, IsString} from "class-validator";
+import {Species} from "../../species/model/species.entity";
+import {Vehicle} from "../../vehicles/model/vehicle.entity";
+import {Starship} from "../../starships/model/starship.entity";
+import {People} from "../../people/model/people.entity";
+import {Planet} from "../../planets/model/planet.entity";
 
 @Entity()
 export class Film {
@@ -26,21 +31,25 @@ export class Film {
     @Column()
     release_date: string;
 
-    @Column({type: 'json', nullable: true})
-    species: string[];
+    @ManyToMany(() => Species, (species) => species.films)
+    @JoinTable({name: 'film_species'})
+    species: Species[];
 
-    @Column({type: 'json', nullable: true})
-    vehicles: string[];
+    @ManyToMany(() => Vehicle, (vehicle) => vehicle.films)
+    @JoinTable({name: 'film_vehicles'})
+    vehicles: Vehicle[];
 
-    @Column({type: 'json', nullable: true})
+    @ManyToMany(() => Starship, (starship) => starship.films)
+    @JoinTable({name: 'film_starships'})
+    starships: Starship[];
 
-    starships: string[];
+    @ManyToMany(() => People, (person) => person.films)
+    @JoinTable({name: 'film_people'})
+    characters: People[];
 
-    @Column({type: 'json', nullable: true})
-    characters: string[];
-
-    @Column({type: 'json', nullable: true})
-    planets: string[];
+    @ManyToMany(() => Planet, (planet) => planet.films)
+    @JoinTable({name: 'film_planets'})
+    planets: Planet[];
 
     @Column()
     created: string;
@@ -48,8 +57,6 @@ export class Film {
     @Column()
     edited: string;
 
-    @ApiProperty()
-    @IsArray()
-    @IsString({each: true})
+    @Column()
     imgs: string[];
 }

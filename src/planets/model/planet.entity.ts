@@ -1,4 +1,5 @@
-import {Column, Entity, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Film} from "../../films/model/film.entity";
 
 
 @Entity()
@@ -36,8 +37,8 @@ export class Planet {
     @Column()
     residents: number;
 
-    @Column({ type: 'json', nullable: true })
-    films: string[];
+    @ManyToMany(() => Film, (film) => film.planets)
+    films: Film[];
 
 
     @Column()
