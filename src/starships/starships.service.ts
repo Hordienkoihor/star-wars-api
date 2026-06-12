@@ -15,7 +15,13 @@ export class StarshipsService {
             throw new BadRequestException("empty starship dto");
         }
 
-        const starship = this.starshipRepository.create(starshipDto);
+        const {pilots, films, ...starshipData} = starshipDto;
+
+        const starship = this.starshipRepository.create({
+            ...starshipData,
+            pilots: pilots ? pilots.map((id) => ({ id: Number(id)})) : [],
+            films: films ? films.map((id) => ({ id: Number(id)})) : [],
+        });
         return await this.starshipRepository.save(starship);
     }
 
@@ -41,7 +47,16 @@ export class StarshipsService {
             throw new BadRequestException("empty starship dto");
         }
 
-        await this.starshipRepository.update(id, starshipDto);
+        const {pilots, films, ...starshipData} = starshipDto;
+
+        const starship = this.starshipRepository.create({
+            id: id,
+            ...starshipData,
+            pilots: pilots ? pilots.map((id) => ({ id: Number(id)})) : [],
+            films: films ? films.map((id) => ({ id: Number(id)})) : [],
+        });
+
+        await this.starshipRepository.update(id, starship);
         return await this.starshipRepository.findOneBy({id: id})
     }
 

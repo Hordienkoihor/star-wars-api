@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {IsArray, IsISO8601, IsNotEmpty, IsNumber, IsString} from "class-validator";
+import {IsArray, IsInt, IsISO8601, IsNotEmpty, IsNumber, IsOptional, IsString} from "class-validator";
 
 export class CreateFilmDto {
 
@@ -34,44 +34,54 @@ export class CreateFilmDto {
     release_date: string;
 
     @ApiProperty({
-        description: 'in future will be changed to id array',
-        type: [String],
+        description: 'array of species used in film ids',
+        type: [Number],
+        required: false,
     })
     @IsArray()
-    @IsString({each: true})
-    species: string[];
+    @IsOptional()
+    @IsInt({each: true})
+    species?: number[];
 
     @ApiProperty({
-        description: 'in future will be changed to id array',
-        type: [String],
+        description: 'array of vehicles used in film ids',
+        type: [Number],
+        required: false,
     })
     @IsArray()
-    @IsString({each: true})
-    vehicles: string[];
+    @IsOptional()
+    @IsInt({each: true})
+    vehicles?: number[];
 
     @ApiProperty({
-        description: 'in future will be changed to id array',
-        type: [String],
+        description: 'array of starships used in film ids',
+        type: [Number],
+        required: false,
     })
     @IsArray()
-    @IsString({each: true})
-    starships: string[];
+    @IsOptional()
+    @IsInt({each: true})
+    starships?: number[];
 
     @ApiProperty({
-        description: 'in future will be changed to id array',
-        type: [String],
+        description: 'array of characters used in film ids',
+        type: [Number],
+        required: false,
     })
     @IsArray()
-    @IsString({each: true})
-    characters: string[];
+    @IsOptional()
+    @IsInt({each: true})
+    characters?: number[];
 
     @ApiProperty({
-        description: 'in future will be changed to id array',
-        type: [String],
+        description: 'array of planets used in film ids',
+        type: [Number],
+        required: false,
     })
     @IsArray()
-    @IsString({each: true})
-    planets: string[];
+    @IsOptional()
+    @IsInt({each: true})
+    planets?: string[];
 
     @ApiProperty()
     @IsISO8601()

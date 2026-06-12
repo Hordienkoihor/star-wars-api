@@ -14,7 +14,15 @@ export class FilmsService {
             throw new BadRequestException("empty film dto");
         }
 
-        const film = this.filmRepository.create(filmDto);
+        const {characters, species, vehicles, starships, planets, ...filmData} = filmDto;
+
+        const film = this.filmRepository.create({
+            ...filmData,
+            characters: characters ? characters.map((id) => ({id: Number(id)})) : [],
+            species: species ? species.map((id) => ({id: Number(id)})) : [],
+            vehicles: vehicles ? vehicles.map((id) => ({id: Number(id)})) : [],
+            planets: planets ? planets.map((id) => ({id: Number(id)})) : [],
+        });
         return await this.filmRepository.save(film);
     }
 
@@ -40,7 +48,18 @@ export class FilmsService {
             throw new BadRequestException("empty film dto");
         }
 
-        await this.filmRepository.update(id, filmDto);
+        const {characters, species, vehicles, starships, planets, ...filmData} = filmDto;
+
+        const film = this.filmRepository.create({
+            id: id,
+            ...filmData,
+            characters: characters ? characters.map((id) => ({id: Number(id)})) : [],
+            species: species ? species.map((id) => ({id: Number(id)})) : [],
+            vehicles: vehicles ? vehicles.map((id) => ({id: Number(id)})) : [],
+            planets: planets ? planets.map((id) => ({id: Number(id)})) : [],
+        });
+
+        await this.filmRepository.update(id, film);
         return await this.filmRepository.findOneBy({id: id})
     }
 

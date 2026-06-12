@@ -78,7 +78,17 @@ export class PeopleService {
     }
 
     async add(peopleDto: CreatePeopleDto) {
-        const person = this.peopleRepository.create(peopleDto)
+        const {films, species, vehicles, starships, ...personData} = peopleDto;
+
+
+        const person = this.peopleRepository.create({
+            ...personData,
+            films: films ? films.map(id => ({id: Number(id)})) : [],
+            species: species ? species.map(id => ({id: Number(id)})) : [],
+            vehicles: vehicles ? vehicles.map(id => ({id: Number(id)})) : [],
+            starships: starships ? starships.map(id => ({id: Number(id)})) : [],
+        })
+
         return await this.peopleRepository.save(person)
     }
 
@@ -100,7 +110,21 @@ export class PeopleService {
     }
 
     async update(id: number, people: CreatePeopleDto) {
-        await this.peopleRepository.update(id, people)
+
+
+        const {films, species, vehicles, starships, ...personData} = people;
+
+        const person = this.peopleRepository.create({
+            id: id,
+            ...personData,
+            films: films ? films.map(id => ({id: Number(id)})) : [],
+            species: species ? species.map(id => ({id: Number(id)})) : [],
+            vehicles: vehicles ? vehicles.map(id => ({id: Number(id)})) : [],
+            starships: starships ? starships.map(id => ({id: Number(id)})) : [],
+        })
+
+        await this.peopleRepository.update(id, person)
+
         return this.get(id);
     }
 

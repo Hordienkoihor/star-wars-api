@@ -16,7 +16,13 @@ export class SpeciesService {
             throw new BadRequestException("empty species dto");
         }
 
-        const species = this.speciesRepository.create(speciesDto);
+        const {films, people, ...speciesData} = speciesDto;
+
+        const species = this.speciesRepository.create({
+            ...speciesData,
+            people: people ? people.map((id) => ({id: Number(id)})) : [],
+            films: films ? films.map((id) => ({id: Number(id)})) : [],
+        });
         return await this.speciesRepository.save(species);
     }
 
@@ -42,7 +48,16 @@ export class SpeciesService {
             throw new BadRequestException("empty species dto");
         }
 
-        await this.speciesRepository.update(id, speciesDto);
+        const {films, people, ...speciesData} = speciesDto;
+
+        const species = this.speciesRepository.create({
+            id: id,
+            ...speciesData,
+            people: people ? people.map((id) => ({id: Number(id)})) : [],
+            films: films ? films.map((id) => ({id: Number(id)})) : [],
+        });
+
+        await this.speciesRepository.update(id, species);
         return await this.speciesRepository.findOneBy({id: id})
     }
 

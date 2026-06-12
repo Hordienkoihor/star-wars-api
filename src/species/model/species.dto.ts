@@ -1,5 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
-import {IsArray, IsISO8601, IsNotEmpty, IsNumberString, IsString} from "class-validator";
+import {IsArray, IsInt, IsISO8601, IsNotEmpty, IsNumberString, IsOptional, IsString} from "class-validator";
 import {Type} from "class-transformer";
 import {Planet} from "../../planets/model/planet.entity";
 import {ManyToOne} from "typeorm";
@@ -53,13 +53,25 @@ export class CreateStarshipDto {
     @IsString()
     homeworld: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        description: 'array of people related to species ids',
+        type: [Number],
+        required: false,
+    })
     @IsArray()
-    people: number[]
+    @IsOptional()
+    @IsInt({each: true})
+    people?: number[]
 
-    @ApiProperty()
+    @ApiProperty({
+        description: 'array of films species was spotted in ids',
+        type: [Number],
+        required: false,
+    })
     @IsArray()
-    films: number[]
+    @IsOptional()
+    @IsInt({each: true})
+    films?: number[]
 
     @ApiProperty()
     @IsISO8601()

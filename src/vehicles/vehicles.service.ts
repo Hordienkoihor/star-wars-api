@@ -15,7 +15,13 @@ export class VehiclesService {
             throw new BadRequestException("empty vehicle dto");
         }
 
-        const vehicle = this.vehiclesRepository.create(vehicleDto);
+        const {pilots, films, ...vehicleData} = vehicleDto;
+
+        const vehicle = this.vehiclesRepository.create({
+            ...vehicleData,
+            pilots: pilots ? pilots.map((id) => ({ id: Number(id)})) : [],
+            films: films ? films.map((id) => ({ id: Number(id)})) : [],
+        });
         return await this.vehiclesRepository.save(vehicle);
     }
 
@@ -41,7 +47,17 @@ export class VehiclesService {
             throw new BadRequestException("empty vehicle dto");
         }
 
-        await this.vehiclesRepository.update(id, vehicleDto);
+
+        const {pilots, films, ...vehicleData} = vehicleDto;
+
+        const vehicle = this.vehiclesRepository.create({
+            id: id,
+            ...vehicleData,
+            pilots: pilots ? pilots.map((id) => ({ id: Number(id)})) : [],
+            films: films ? films.map((id) => ({ id: Number(id)})) : [],
+        });
+
+        await this.vehiclesRepository.update(id, vehicle);
         return await this.vehiclesRepository.findOneBy({id: id})
     }
 

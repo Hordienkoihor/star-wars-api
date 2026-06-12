@@ -14,7 +14,13 @@ export class PlanetsService {
             throw new BadRequestException("empty planet dto");
         }
 
-        const planet = this.planetRepository.create(planetDto);
+        const {films, ...planetData} = planetDto;
+
+        const planet = this.planetRepository.create({
+            ...planetData,
+            films: films ? films.map((id) => ({id: Number(id)})) : []
+        });
+
         return await this.planetRepository.save(planet);
     }
 
@@ -40,7 +46,15 @@ export class PlanetsService {
             throw new BadRequestException("empty planet dto");
         }
 
-        await this.planetRepository.update(id, planetDto);
+        const {films, ...planetData} = planetDto;
+
+        const planet = this.planetRepository.create({
+            id: id,
+            ...planetData,
+            films: films ? films.map((id) => ({id: Number(id)})) : []
+        });
+
+        await this.planetRepository.update(id, planet);
         return await this.planetRepository.findOneBy({id: id})
     }
 

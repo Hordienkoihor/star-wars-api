@@ -1,4 +1,4 @@
-import {IsArray, IsISO8601, IsNotEmpty, IsNumber, IsNumberString, IsString} from "class-validator";
+import {IsArray, IsInt, IsISO8601, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString} from "class-validator";
 import {Type} from "class-transformer";
 import {ApiProperty} from "@nestjs/swagger";
 
@@ -79,20 +79,24 @@ export class CreateStarshipDto {
     consumables: number;
 
     @ApiProperty({
-        description: 'in future will be changed to id array',
-        type: [String],
+        description: 'array of films starship was spotted in ids',
+        type: [Number],
+        required: false,
     })
     @IsArray()
-    @IsString({each: true})
-    films: string[];
+    @IsOptional()
+    @IsInt({each: true})
+    films?: number[];
 
     @ApiProperty({
-        description: 'in future will be changed to id array',
-        type: [String],
+        description: 'array of people who piloted the starship ids',
+        type: [Number],
+        required: false,
     })
     @IsArray()
-    @IsString({each: true})
-    pilots: string[];
+    @IsOptional()
+    @IsInt({each: true})
+    pilots?: number[];
 
     @ApiProperty()
     @IsISO8601()

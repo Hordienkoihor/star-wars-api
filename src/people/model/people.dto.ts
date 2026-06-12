@@ -1,4 +1,4 @@
-import {IsArray, IsISO8601, IsNotEmpty, IsNumber, IsNumberString, IsString} from "class-validator";
+import {IsArray, IsInt, IsISO8601, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString} from "class-validator";
 import {Type} from "class-transformer";
 import {ApiProperty} from "@nestjs/swagger";
 
@@ -44,36 +44,44 @@ export class CreatePeopleDto {
     homeworld: string;
 
     @ApiProperty({
-        description: 'in future will be changed to id array',
-        type: [String],
+        description: 'array of films person was spotted in ids',
+        type: [Number],
+        required: false,
     })
     @IsArray()
-    @IsString({each: true})
-    films: string[];
+    @IsOptional()
+    @IsInt({each: true})
+    films?: number[];
 
     @ApiProperty({
-        description: 'in future will be changed to id array',
-        type: [String],
+        description: 'array of  species person is related to ids',
+        type: [Number],
+        required: false,
     })
     @IsArray()
-    @IsString({each: true})
-    species: string[];
+    @IsOptional()
+    @IsInt({each: true})
+    species?: number[];
 
     @ApiProperty({
-        description: 'in future will be changed to id array',
-        type: [String],
+        description: 'array of vehicles person was spotted piloting ids',
+        type: [Number],
+        required: false,
     })
     @IsArray()
-    @IsString({each: true})
-    vehicles: string[];
+    @IsOptional()
+    @IsInt({each: true})
+    vehicles?: number[];
 
     @ApiProperty({
-        description: 'in future will be changed to id array',
-        type: [String],
+        description: 'array of starships person was spotted piloting ids',
+        type: [Number],
+        required: false,
     })
     @IsArray()
-    @IsString({each: true})
-    starships: string[];
+    @IsOptional()
+    @IsInt({each: true})
+    starships?: string[];
 
     @ApiProperty()
     @IsISO8601()
