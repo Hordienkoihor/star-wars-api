@@ -27,8 +27,12 @@ export class SpeciesService {
     }
 
     async get(id: number) {
-        return await this.speciesRepository.findOneBy({
-            id: id
+        return await this.speciesRepository.findOne({
+            where: {id},
+            relations: {
+                people: true,
+                films: true,
+            }
         })
     }
 
@@ -40,6 +44,10 @@ export class SpeciesService {
         return await this.speciesRepository.find({
             skip: offset,
             take: limit,
+            relations: {
+                people: true,
+                films: true,
+            }
         })
     }
 

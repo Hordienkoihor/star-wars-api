@@ -26,8 +26,12 @@ export class VehiclesService {
     }
 
     async get(id: number) {
-        return await this.vehiclesRepository.findOneBy({
-            id: id
+        return await this.vehiclesRepository.findOne({
+            where: {id},
+            relations: {
+                pilots: true,
+                films: true,
+            }
         })
     }
 
@@ -39,6 +43,10 @@ export class VehiclesService {
         return await this.vehiclesRepository.find({
             skip: offset,
             take: limit,
+            relations: {
+                pilots: true,
+                films: true,
+            }
         })
     }
 

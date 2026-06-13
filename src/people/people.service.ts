@@ -93,8 +93,14 @@ export class PeopleService {
     }
 
     async get(id: number) {
-        return await this.peopleRepository.findOneBy({
-            id: id
+        return await this.peopleRepository.findOne({
+            where: {id},
+            relations: {
+                films: true,
+                species: true,
+                vehicles: true,
+                starships: true,
+            }
         })
     }
 
@@ -106,12 +112,16 @@ export class PeopleService {
         return await this.peopleRepository.find({
             skip: offset,
             take: limit,
+            relations: {
+                films: true,
+                species: true,
+                vehicles: true,
+                starships: true,
+            }
         })
     }
 
     async update(id: number, people: CreatePeopleDto) {
-
-
         const {films, species, vehicles, starships, ...personData} = people;
 
         const person = this.peopleRepository.create({

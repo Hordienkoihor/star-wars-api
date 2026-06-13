@@ -27,19 +27,43 @@ export class FilmsService {
     }
 
     async get(id: number) {
-        return await this.filmRepository.findOneBy({
-            id: id
+        return await this.filmRepository.findOne({
+            where: {id},
+            relations: {
+                characters: true,
+                species: true,
+                vehicles: true,
+                starships: true,
+                planets: true,
+            }
         })
     }
 
     async getAll() {
-        return await this.filmRepository.find();
+        return await this.filmRepository.find(
+        //     {
+        //     relations: {
+        //         characters: true,
+        //         species: true,
+        //         vehicles: true,
+        //         starships: true,
+        //         planets: true,
+        //     }
+        // }
+        );
     }
 
     async getSinglePage(offset: number = 0, limit: number = 10) {
         return await this.filmRepository.find({
             skip: offset,
             take: limit,
+            relations: {
+                characters: true,
+                species: true,
+                vehicles: true,
+                starships: true,
+                planets: true,
+            }
         })
     }
 

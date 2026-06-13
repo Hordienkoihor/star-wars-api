@@ -25,8 +25,11 @@ export class PlanetsService {
     }
 
     async get(id: number) {
-        return await this.planetRepository.findOneBy({
-            id: id
+        return await this.planetRepository.findOne({
+            where: {id},
+            relations: {
+                films: true,
+            }
         })
     }
 

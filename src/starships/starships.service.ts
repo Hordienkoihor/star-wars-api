@@ -19,15 +19,19 @@ export class StarshipsService {
 
         const starship = this.starshipRepository.create({
             ...starshipData,
-            pilots: pilots ? pilots.map((id) => ({ id: Number(id)})) : [],
-            films: films ? films.map((id) => ({ id: Number(id)})) : [],
+            pilots: pilots ? pilots.map((id) => ({id: Number(id)})) : [],
+            films: films ? films.map((id) => ({id: Number(id)})) : [],
         });
         return await this.starshipRepository.save(starship);
     }
 
     async get(id: number) {
-        return await this.starshipRepository.findOneBy({
-            id: id
+        return await this.starshipRepository.findOne({
+            where: {id},
+            relations: {
+                pilots: true,
+                films: true,
+            }
         })
     }
 
@@ -39,6 +43,10 @@ export class StarshipsService {
         return await this.starshipRepository.find({
             skip: offset,
             take: limit,
+            relations: {
+                pilots: true,
+                films: true,
+            }
         })
     }
 
@@ -52,8 +60,8 @@ export class StarshipsService {
         const starship = this.starshipRepository.create({
             id: id,
             ...starshipData,
-            pilots: pilots ? pilots.map((id) => ({ id: Number(id)})) : [],
-            films: films ? films.map((id) => ({ id: Number(id)})) : [],
+            pilots: pilots ? pilots.map((id) => ({id: Number(id)})) : [],
+            films: films ? films.map((id) => ({id: Number(id)})) : [],
         });
 
         await this.starshipRepository.update(id, starship);
