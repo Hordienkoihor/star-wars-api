@@ -121,7 +121,16 @@ export class PeopleController {
         const newImages = files?.map(file => file.filename) || [];
 
         person.imgs = [...(person.imgs || []), ...newImages];
-        await this.peopleService.update(id, person)
+
+        const {films, species, vehicles, starships, ...personData} = person;
+
+        await this.peopleService.update(id, {
+            ...personData,
+            species: species ? species.map((s) => s.id) : [],
+            vehicles: vehicles ? vehicles.map((v) => v.id) : [],
+            starships: starships ? starships.map((s) => s.id) : [],
+            films: films ? films.map((f) => f.id) : [],
+        })
 
         return person;
     }
@@ -147,8 +156,16 @@ export class PeopleController {
         }
 
         person.imgs = person.imgs.filter(name => !images.includes(name));
-        await this.peopleService.update(id, person)
 
+        const {films, species, vehicles, starships, ...personData} = person;
+
+        await this.peopleService.update(id, {
+            ...personData,
+            species: species ? species.map((s) => s.id) : [],
+            vehicles: vehicles ? vehicles.map((v) => v.id) : [],
+            starships: starships ? starships.map((s) => s.id) : [],
+            films: films ? films.map((f) => f.id) : [],
+        })
 
         await Promise.all(images.map(async (image) => {
                 try {

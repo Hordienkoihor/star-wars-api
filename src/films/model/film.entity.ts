@@ -57,6 +57,6 @@ export class Film {
     @Column()
     edited: string;
 
-    @Column()
+    @Column({ type: 'json', nullable: true })
     imgs: string[];
 }

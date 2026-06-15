@@ -22,6 +22,7 @@ export class FilmsService {
             species: species ? species.map((id) => ({id: Number(id)})) : [],
             vehicles: vehicles ? vehicles.map((id) => ({id: Number(id)})) : [],
             planets: planets ? planets.map((id) => ({id: Number(id)})) : [],
+            starships: starships ? starships.map((id) => ({id: Number(id)})) : [],
         });
         return await this.filmRepository.save(film);
     }
@@ -81,10 +82,10 @@ export class FilmsService {
             species: species ? species.map((id) => ({id: Number(id)})) : [],
             vehicles: vehicles ? vehicles.map((id) => ({id: Number(id)})) : [],
             planets: planets ? planets.map((id) => ({id: Number(id)})) : [],
+            starships: starships ? starships.map((id) => ({id: Number(id)})) : [],
         });
 
-        await this.filmRepository.update(id, film);
-        return await this.filmRepository.findOneBy({id: id})
+        return await this.filmRepository.save(film);
     }
 
     async delete(id: number) {

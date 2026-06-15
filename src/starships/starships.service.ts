@@ -64,8 +64,8 @@ export class StarshipsService {
             films: films ? films.map((id) => ({id: Number(id)})) : [],
         });
 
-        await this.starshipRepository.update(id, starship);
-        return await this.starshipRepository.findOneBy({id: id})
+
+        return await this.starshipRepository.save(starship);
     }
 
     async delete(id: number) {

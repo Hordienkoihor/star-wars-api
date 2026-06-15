@@ -120,7 +120,14 @@ export class StarshipsController {
         const newImages = files?.map(file => file.filename) || [];
 
         starship.imgs = [...(starship.imgs || []), ...newImages];
-        await this.starshipService.update(id, starship)
+
+        const {pilots, films, ...starshipData} = starship;
+
+        await this.starshipService.update(id, {
+            ...starshipData,
+            pilots: pilots ? pilots.map((p) => p.id) : [],
+            films: films ? films.map((f) => f.id) : [],
+        })
 
         return starship;
     }
@@ -146,7 +153,13 @@ export class StarshipsController {
         }
 
         starship.imgs = starship.imgs.filter(name => !images.includes(name));
-        await this.starshipService.update(id, starship)
+        const {pilots, films, ...starshipData} = starship;
+
+        await this.starshipService.update(id, {
+            ...starshipData,
+            pilots: pilots ? pilots.map((p) => p.id) : [],
+            films: films ? films.map((f) => f.id) : [],
+        })
 
 
         await Promise.all(images.map(async (image) => {

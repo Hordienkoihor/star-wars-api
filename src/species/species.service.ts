@@ -4,14 +4,14 @@ import {Planet} from "../planets/model/planet.entity";
 import {HttpService} from "@nestjs/axios";
 import {CreatePlanetDto} from "../planets/model/planet.dto";
 import {Species} from "./model/species.entity";
-import {CreateStarshipDto} from "./model/species.dto";
+import {CreateSpeciesDto} from "./model/species.dto";
 
 @Injectable()
 export class SpeciesService {
     constructor(@Inject('SPECIES_REPOSITORY') private readonly speciesRepository: Repository<Species>, private readonly httpService: HttpService) {
     }
 
-    async add(speciesDto: CreateStarshipDto) {
+    async add(speciesDto: CreateSpeciesDto) {
         if (!speciesDto) {
             throw new BadRequestException("empty species dto");
         }
@@ -51,7 +51,7 @@ export class SpeciesService {
         })
     }
 
-    async update(id: number, speciesDto: CreateStarshipDto) {
+    async update(id: number, speciesDto: CreateSpeciesDto) {
         if (!speciesDto) {
             throw new BadRequestException("empty species dto");
         }
@@ -65,8 +65,8 @@ export class SpeciesService {
             films: films ? films.map((id) => ({id: Number(id)})) : [],
         });
 
-        await this.speciesRepository.update(id, species);
-        return await this.speciesRepository.findOneBy({id: id})
+        return await this.speciesRepository.save(species);
+
     }
 
     async delete(id: number) {

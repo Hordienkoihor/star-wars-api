@@ -65,8 +65,8 @@ export class VehiclesService {
             films: films ? films.map((id) => ({ id: Number(id)})) : [],
         });
 
-        await this.vehiclesRepository.update(id, vehicle);
-        return await this.vehiclesRepository.findOneBy({id: id})
+
+        return await this.vehiclesRepository.save(vehicle);
     }
 
     async delete(id: number) {

@@ -81,7 +81,7 @@ export class CreatePeopleDto {
     @IsArray()
     @IsOptional()
     @IsInt({each: true})
-    starships?: string[];
+    starships?: number[];
 
     @ApiProperty()
     @IsISO8601()

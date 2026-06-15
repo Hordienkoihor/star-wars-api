@@ -5,7 +5,7 @@ import {Planet} from "../../planets/model/planet.entity";
 import {ManyToOne} from "typeorm";
 import {People} from "../../people/model/people.entity";
 
-export class CreateStarshipDto {
+export class CreateSpeciesDto {
 
     @ApiProperty()
     @IsString()

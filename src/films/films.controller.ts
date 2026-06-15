@@ -121,7 +121,14 @@ export class FilmsController {
         const newImages = files?.map(file => file.filename) || [];
 
         film.imgs = [...(film.imgs || []), ...newImages];
-        await this.filmService.update(id, film)
+        await this.filmService.update(id, {
+            ...film,
+            characters: film.characters ? film.characters.map(c => c.id) : [],
+            species: film.species ? film.species.map(s => s.id) : [],
+            vehicles: film.vehicles ? film.vehicles.map(v => v.id) : [],
+            starships: film.starships ? film.starships.map(s => s.id) : [],
+            planets: film.planets ? film.planets.map(p => p.id) : [],
+        })
 
         return film;
     }
@@ -147,7 +154,14 @@ export class FilmsController {
         }
 
         film.imgs = film.imgs.filter(name => !images.includes(name));
-        await this.filmService.update(id, film)
+        await this.filmService.update(id, {
+            ...film,
+            characters: film.characters ? film.characters.map(c => c.id) : [],
+            species: film.species ? film.species.map(s => s.id) : [],
+            vehicles: film.vehicles ? film.vehicles.map(v => v.id) : [],
+            starships: film.starships ? film.starships.map(s => s.id) : [],
+            planets: film.planets ? film.planets.map(p => p.id) : [],
+        })
 
 
         await Promise.all(images.map(async (image) => {

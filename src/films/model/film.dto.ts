@@ -81,7 +81,7 @@ export class CreateFilmDto {
     @IsArray()
     @IsOptional()
     @IsInt({each: true})
-    planets?: string[];
+    planets?: number[];
 
     @ApiProperty()
     @IsISO8601()

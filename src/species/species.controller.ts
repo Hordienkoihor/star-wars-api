@@ -20,7 +20,7 @@ import Path from "node:path";
 import type {Response} from "express";
 import {createReadStream, existsSync} from "fs";
 import {SpeciesService} from "./species.service";
-import {CreateStarshipDto} from "./model/species.dto";
+import {CreateSpeciesDto} from "./model/species.dto";
 
 @Controller('species')
 export class SpeciesController {
@@ -59,7 +59,7 @@ export class SpeciesController {
             }
         )
     }))
-    async create(@Body() speciesDto: CreateStarshipDto, @UploadedFiles(
+    async create(@Body() speciesDto: CreateSpeciesDto, @UploadedFiles(
         new ParseFilePipeBuilder()
             .addFileTypeValidator({
                 fileType: /^image\/(png|jpeg)$/,
@@ -76,7 +76,7 @@ export class SpeciesController {
     }
 
     @Put(':id')
-    async update(@Param('id') id: number, @Body() speciesDto: CreateStarshipDto) {
+    async update(@Param('id') id: number, @Body() speciesDto: CreateSpeciesDto) {
         return await this.speciesService.update(id, speciesDto)
     }
 
@@ -120,7 +120,14 @@ export class SpeciesController {
         const newImages = files?.map(file => file.filename) || [];
 
         species.imgs = [...(species.imgs || []), ...newImages];
-        await this.speciesService.update(id, species)
+
+        const {people, films, ...speciesData} = species
+
+        await this.speciesService.update(id, {
+            ...speciesData,
+            films: films ? films.map((f) => f.id) : [],
+            people: people ? people.map((p) => p.id) : []
+        })
 
         return species;
     }
@@ -146,7 +153,14 @@ export class SpeciesController {
         }
 
         species.imgs = species.imgs.filter(name => !images.includes(name));
-        await this.speciesService.update(id, species)
+
+        const {people, films, ...speciesData} = species
+
+        await this.speciesService.update(id, {
+            ...speciesData,
+            films: films ? films.map((f) => f.id) : [],
+            people: people ? people.map((p) => p.id) : []
+        })
 
 
         await Promise.all(images.map(async (image) => {

@@ -72,7 +72,7 @@ export class CreateVehicleDto {
     @IsArray()
     @IsOptional()
     @IsInt({each: true})
-    films?: string[];
+    films?: number[];
 
     @ApiProperty({
         description: 'array of people who piloted the vehicle ids',
@@ -82,7 +82,7 @@ export class CreateVehicleDto {
     @IsArray()
     @IsOptional()
     @IsInt({each: true})
-    pilots?: string[];
+    pilots?: number[];
 
     @ApiProperty()
     @IsISO8601()

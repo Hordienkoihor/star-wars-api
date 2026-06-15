@@ -6,7 +6,7 @@ import {CreatePlanetDto} from "./model/planet.dto";
 
 @Injectable()
 export class PlanetsService {
-    constructor(@Inject('PLATEN_REPOSITORY') private readonly planetRepository: Repository<Planet>, private readonly httpService: HttpService) {
+    constructor(@Inject('PLANET_REPOSITORY') private readonly planetRepository: Repository<Planet>, private readonly httpService: HttpService) {
     }
 
     async add(planetDto: CreatePlanetDto) {
@@ -57,8 +57,7 @@ export class PlanetsService {
             films: films ? films.map((id) => ({id: Number(id)})) : []
         });
 
-        await this.planetRepository.update(id, planet);
-        return await this.planetRepository.findOneBy({id: id})
+        return await this.planetRepository.save(planet);
     }
 
     async delete(id: number) {

@@ -122,7 +122,13 @@ export class VehiclesController {
         const newImages = files?.map(file => file.filename) || [];
 
         vehicle.imgs = [...(vehicle.imgs || []), ...newImages];
-        await this.vehiclesService.update(id, vehicle)
+        const {pilots, films, ...vehicleData} = vehicle;
+
+        await this.vehiclesService.update(id, {
+            ...vehicleData,
+            pilots: pilots ? pilots.map((p) => p.id) : [],
+            films: films ? films.map((f) => f.id) : [],
+        })
 
         return vehicle;
     }
@@ -148,7 +154,13 @@ export class VehiclesController {
         }
 
         vehicle.imgs = vehicle.imgs.filter(name => !images.includes(name));
-        await this.vehiclesService.update(id, vehicle)
+        const {pilots, films, ...vehicleData} = vehicle;
+
+        await this.vehiclesService.update(id, {
+            ...vehicleData,
+            pilots: pilots ? pilots.map((p) => p.id) : [],
+            films: films ? films.map((f) => f.id) : [],
+        })
 
 
         await Promise.all(images.map(async (image) => {

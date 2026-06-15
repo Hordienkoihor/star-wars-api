@@ -120,7 +120,12 @@ export class PlanetsController {
         const newImages = files?.map(file => file.filename) || [];
 
         planet.imgs = [...(planet.imgs || []), ...newImages];
-        await this.planetService.update(id, planet)
+
+        const {films, ...planetData} = planet
+        await this.planetService.update(id, {
+            ...planetData,
+            films: films ? films.map((f) => f.id) : []
+        })
 
         return planet;
     }
@@ -146,7 +151,11 @@ export class PlanetsController {
         }
 
         planet.imgs = planet.imgs.filter(name => !images.includes(name));
-        await this.planetService.update(id, planet)
+        const {films, ...planetData} = planet
+        await this.planetService.update(id, {
+            ...planetData,
+            films: films ? films.map((f) => f.id) : []
+        })
 
 
         await Promise.all(images.map(async (image) => {
