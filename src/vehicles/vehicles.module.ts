@@ -8,7 +8,8 @@ import {DatabaseModule} from "../database/database.module";
 @Module({
     imports: [DatabaseModule, HttpModule],
     providers: [VehiclesService, ...vehiclesProviders],
-    controllers: [VehiclesController]
+    controllers: [VehiclesController],
+    exports: [VehiclesService],
 })
 export class VehiclesModule {
 }

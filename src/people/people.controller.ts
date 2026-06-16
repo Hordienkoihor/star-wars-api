@@ -122,10 +122,11 @@ export class PeopleController {
 
         person.imgs = [...(person.imgs || []), ...newImages];
 
-        const {films, species, vehicles, starships, ...personData} = person;
+        const {films, species, vehicles, starships, homeworld, ...personData} = person;
 
         await this.peopleService.update(id, {
             ...personData,
+            homeworld: homeworld ? homeworld.id : null,
             species: species ? species.map((s) => s.id) : [],
             vehicles: vehicles ? vehicles.map((v) => v.id) : [],
             starships: starships ? starships.map((s) => s.id) : [],
@@ -157,10 +158,11 @@ export class PeopleController {
 
         person.imgs = person.imgs.filter(name => !images.includes(name));
 
-        const {films, species, vehicles, starships, ...personData} = person;
+        const {films, species, vehicles, starships, homeworld, ...personData} = person;
 
         await this.peopleService.update(id, {
             ...personData,
+            homeworld: homeworld ? homeworld.id : null,
             species: species ? species.map((s) => s.id) : [],
             vehicles: vehicles ? vehicles.map((v) => v.id) : [],
             starships: starships ? starships.map((s) => s.id) : [],

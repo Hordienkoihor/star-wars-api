@@ -1,5 +1,6 @@
-import {Column, Entity, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Film} from "../../films/model/film.entity";
+import {People} from "../../people/model/people.entity";
 
 
 @Entity()
@@ -10,19 +11,19 @@ export class Planet {
     @Column()
     name: string;
 
-    @Column()
+    @Column({ type: 'int', nullable: true })
     diameter: number;
 
-    @Column()
+    @Column({nullable: true})
     rotation_period: number;
 
-    @Column()
+    @Column({ nullable: true })
     orbital_period: number;
 
-    @Column()
-    gravity: number;
+    @Column({ nullable: true })
+    gravity: string;
 
-    @Column()
+    @Column({ type: 'bigint', nullable: true })
     population: number;
 
     @Column()
@@ -31,11 +32,11 @@ export class Planet {
     @Column()
     terrain: string;
 
-    @Column()
+    @Column({ nullable: true })
     surface_water: number;
 
-    @Column()
-    residents: number;
+    @OneToMany(() => People, (people) => people.homeworld)
+    residents: People[];
 
     @ManyToMany(() => Film, (film) => film.planets)
     films: Film[];

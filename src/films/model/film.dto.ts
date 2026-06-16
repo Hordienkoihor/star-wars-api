@@ -16,7 +16,7 @@ export class CreateFilmDto {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
-    opening_claw: string;
+    opening_crawl: string;
 
     @ApiProperty()
     @IsString()

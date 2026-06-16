@@ -14,7 +14,7 @@ export class CreatePlanetDto {
     @IsNumberString()
     @IsNotEmpty()
     @Type(() => Number)
-    diameter: number;
+    diameter?: number;
 
     @ApiProperty()
     @IsNumberString()
@@ -29,10 +29,8 @@ export class CreatePlanetDto {
     orbital_period: number;
 
     @ApiProperty()
-    @IsNumberString()
     @IsNotEmpty()
-    @Type(() => Number)
-    gravity: number;
+    gravity: string;
 
     @ApiProperty()
     @IsNumberString()
@@ -56,11 +54,11 @@ export class CreatePlanetDto {
     @Type(() => Number)
     surface_water: number;
 
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    residents: number;
+    // @ApiProperty()
+    // @IsNumberString()
+    // @IsNotEmpty()
+    // @Type(() => Number)
+    // residents: number;
 
     @ApiProperty({
         description: 'array of films planet was spotted in ids',

@@ -8,6 +8,7 @@ import {filmsProviders} from "./films.providers";
 @Module({
   imports: [DatabaseModule, HttpModule],
   providers: [FilmsService, ...filmsProviders],
-  controllers: [FilmsController]
+  controllers: [FilmsController],
+  exports: [FilmsService],
 })
 export class FilmsModule {}

@@ -7,9 +7,10 @@ import { PlanetsModule } from './planets/planets.module';
 import { SpeciesModule } from './species/species.module';
 import { StarshipsModule } from './starships/starships.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
+import {SeedModule} from "./seeder/seeder.module";
 
 @Module({
-  imports: [PeopleModule, FilmsModule, PlanetsModule, SpeciesModule, StarshipsModule, VehiclesModule],
+  imports: [PeopleModule, FilmsModule, PlanetsModule, SpeciesModule, StarshipsModule, VehiclesModule, SeedModule],
   controllers: [AppController],
   providers: [AppService],
 })

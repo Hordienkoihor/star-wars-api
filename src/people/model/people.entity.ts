@@ -1,8 +1,9 @@
-import {Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Film} from "../../films/model/film.entity";
 import {Species} from "../../species/model/species.entity";
 import {Vehicle} from "../../vehicles/model/vehicle.entity";
 import {Starship} from "../../starships/model/starship.entity";
+import {Planet} from "../../planets/model/planet.entity";
 
 @Entity()
 export class People {
@@ -33,8 +34,8 @@ export class People {
     @Column()
     gender: string;
 
-    @Column()
-    homeworld: string;
+    @ManyToOne(() => Planet, (planet) => planet.residents, {nullable: true})
+    homeworld: Planet;
 
     @ManyToMany(() => Film, (film) => film.characters)
     films: Film[];

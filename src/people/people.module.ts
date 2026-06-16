@@ -9,6 +9,6 @@ import {HttpModule, HttpService} from "@nestjs/axios";
     imports: [DatabaseModule, HttpModule],
     controllers: [PeopleController],
     providers: [PeopleService, ...peopleProviders],
-    exports: [],
+    exports: [PeopleService],
 })
 export class PeopleModule {}

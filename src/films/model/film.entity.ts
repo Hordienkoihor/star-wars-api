@@ -19,8 +19,8 @@ export class Film {
     @Column()
     episode_id: number;
 
-    @Column()
-    opening_claw: string;
+    @Column({type: 'varchar', length: 600})
+    opening_crawl: string;
 
     @Column()
     director: string;

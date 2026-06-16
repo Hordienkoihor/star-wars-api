@@ -8,6 +8,7 @@ import {HttpModule} from "@nestjs/axios";
 @Module({
   imports: [DatabaseModule, HttpModule],
   providers: [StarshipsService, ...starshipProviders],
-  controllers: [StarshipsController]
+  controllers: [StarshipsController],
+  exports: [StarshipsService],
 })
 export class StarshipsModule {}

@@ -40,8 +40,9 @@ export class CreatePeopleDto {
     gender: string;
 
     @ApiProperty()
-    @IsString()
-    homeworld: string;
+    @IsOptional()
+    @IsInt()
+    homeworld: number | null;
 
     @ApiProperty({
         description: 'array of films person was spotted in ids',

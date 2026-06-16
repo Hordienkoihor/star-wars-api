@@ -40,6 +40,10 @@ export class FilmsService {
         })
     }
 
+    async getByTitle(title: string) {
+        return await this.filmRepository.findOne({where: {title}});
+    }
+
     async getAll() {
         return await this.filmRepository.find(
         //     {
