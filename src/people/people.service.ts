@@ -111,6 +111,10 @@ export class PeopleService {
         })
     }
 
+    async getByUrl(url: string) {
+        return await this.peopleRepository.findOne({where: {url}});
+    }
+
     async getAll() {
         return await this.peopleRepository.find()
     }

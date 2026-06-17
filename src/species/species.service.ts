@@ -16,10 +16,11 @@ export class SpeciesService {
             throw new BadRequestException("empty species dto");
         }
 
-        const {films, people, ...speciesData} = speciesDto;
+        const {films, people, homeworld, ...speciesData} = speciesDto;
 
         const species = this.speciesRepository.create({
             ...speciesData,
+            homeworld: homeworld ? {id: Number(homeworld)} : undefined,
             people: people ? people.map((id) => ({id: Number(id)})) : [],
             films: films ? films.map((id) => ({id: Number(id)})) : [],
         });
@@ -34,6 +35,14 @@ export class SpeciesService {
                 films: true,
             }
         })
+    }
+
+    async getByName(name: string) {
+        return await this.speciesRepository.findOne({where: {name}});
+    }
+
+    async getByUrl(url: string) {
+        return await this.speciesRepository.findOne({where: {url}});
     }
 
     async getAll() {
@@ -56,11 +65,12 @@ export class SpeciesService {
             throw new BadRequestException("empty species dto");
         }
 
-        const {films, people, ...speciesData} = speciesDto;
+        const {films, people, homeworld, ...speciesData} = speciesDto;
 
         const species = this.speciesRepository.create({
             id: id,
             ...speciesData,
+            homeworld: homeworld ? {id: Number(homeworld)} : undefined,
             people: people ? people.map((id) => ({id: Number(id)})) : [],
             films: films ? films.map((id) => ({id: Number(id)})) : [],
         });

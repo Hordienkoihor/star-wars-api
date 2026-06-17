@@ -11,40 +11,40 @@ export class Vehicle {
     @Column()
     name: string;
 
-    @Column()
+    @Column({nullable: true})
     model: string;
 
-    @Column()
+    @Column({nullable: true})
     vehicle_class: string;
 
-    @Column()
+    @Column({nullable: true})
     manufacturer: string;
 
-    @Column()
-    length: number;
+    @Column({nullable: true})
+    length: string;
 
-    @Column()
-    cost_in_credits: number;
+    @Column({nullable: true})
+    cost_in_credits: string;
 
-    @Column()
-    crew: number;
+    @Column({nullable: true})
+    crew: string;
 
-    @Column()
-    passengers: number;
+    @Column({nullable: true})
+    passengers: string;
 
-    @Column()
-    max_atmosphering_speed: number;
+    @Column({nullable: true})
+    max_atmosphering_speed: string;
 
-    @Column()
-    cargo_capacity: number;
+    @Column({nullable: true})
+    cargo_capacity: string;
 
-    @Column()
+    @Column({nullable: true})
     consumables: string;
 
-    @ManyToMany(() => Film, (film) => film.vehicles)
+    @ManyToMany(() => Film, (film) => film.vehicles, {nullable: true})
     films: Film[];
 
-    @ManyToMany(() => People, (person) => person.vehicles)
+    @ManyToMany(() => People, (person) => person.vehicles, {nullable: true})
     pilots: People[];
 
     @Column()
@@ -52,6 +52,9 @@ export class Vehicle {
 
     @Column()
     edited: string;
+
+    @Column()
+    url: string;
 
     @Column({type: 'json', nullable: true})
     imgs: string[];

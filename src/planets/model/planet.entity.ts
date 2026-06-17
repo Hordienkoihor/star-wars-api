@@ -1,6 +1,7 @@
 import {Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Film} from "../../films/model/film.entity";
 import {People} from "../../people/model/people.entity";
+import {Species} from "../../species/model/species.entity";
 
 
 @Entity()
@@ -11,42 +12,47 @@ export class Planet {
     @Column()
     name: string;
 
-    @Column({ type: 'int', nullable: true })
-    diameter: number;
+    @Column({nullable: true })
+    diameter: string;
 
     @Column({nullable: true})
-    rotation_period: number;
+    rotation_period: string;
 
     @Column({ nullable: true })
-    orbital_period: number;
+    orbital_period: string;
 
     @Column({ nullable: true })
     gravity: string;
 
-    @Column({ type: 'bigint', nullable: true })
-    population: number;
+    @Column({nullable: true })
+    population: string;
 
-    @Column()
+    @Column({ nullable: true })
     climate: string;
 
-    @Column()
+    @Column({ nullable: true })
     terrain: string;
 
     @Column({ nullable: true })
-    surface_water: number;
+    surface_water: string;
 
-    @OneToMany(() => People, (people) => people.homeworld)
+    @OneToMany(() => People, (people) => people.homeworld, {nullable: true})
     residents: People[];
 
-    @ManyToMany(() => Film, (film) => film.planets)
+    @ManyToMany(() => Film, (film) => film.planets, {nullable: true})
     films: Film[];
 
+    @OneToMany(() => Species, (species) => species.homeworld, {nullable: true})
+    species: Species[];
 
     @Column()
     created: string;
 
     @Column()
     edited: string;
+
+    @Column()
+    url: string;
 
     @Column({ type: 'json', nullable: true })
     imgs: string[];

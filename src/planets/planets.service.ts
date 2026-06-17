@@ -33,6 +33,10 @@ export class PlanetsService {
         })
     }
 
+    async getByUrl(url: string) {
+        return await this.planetRepository.findOne({where: {url}});
+    }
+
     async getAll() {
         return await this.planetRepository.find();
     }

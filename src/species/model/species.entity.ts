@@ -1,6 +1,7 @@
-import {Column, Entity, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn} from "typeorm";
 import {Film} from "../../films/model/film.entity";
 import {People} from "../../people/model/people.entity";
+import {Planet} from "../../planets/model/planet.entity";
 
 @Entity()
 export class Species {
@@ -14,10 +15,10 @@ export class Species {
     classification: string;
 
     @Column()
-    average_height: number;
+    average_height: string;
 
     @Column()
-    average_lifespan: number;
+    average_lifespan: string;
 
     @Column()
     eye_colors: string;
@@ -31,13 +32,13 @@ export class Species {
     @Column()
     language: string;
 
-    @Column()
-    homeworld: string;
+    @ManyToOne(() => Planet, (planet) => planet.species, {nullable: true})
+    homeworld: Planet;
 
-    @ManyToMany(() => People, (people) => people.species)
+    @ManyToMany(() => People, (people) => people.species, {nullable: true})
     people: People[];
 
-    @ManyToMany(() => Film, (film) => film.species)
+    @ManyToMany(() => Film, (film) => film.species, {nullable: true})
     films: Film[]
 
     @Column()
@@ -45,6 +46,9 @@ export class Species {
 
     @Column()
     edited: string;
+
+    @Column()
+    url: string;
 
     @Column({type: 'json', nullable: true})
     imgs: string[];

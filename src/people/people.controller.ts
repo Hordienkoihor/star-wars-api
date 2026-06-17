@@ -22,6 +22,7 @@ import * as Path from "node:path";
 import {createReadStream, existsSync} from 'fs'
 import {ImageValidationPipe} from "../pipes/ImageValidationPipe";
 import * as fs from "node:fs";
+import {multerConfig} from "../multer/multer-config.helper";
 
 @Controller('people')
 export class PeopleController {
@@ -49,17 +50,7 @@ export class PeopleController {
     }
 
     @Post()
-    @UseInterceptors(FilesInterceptor('files', 10, {
-        storage: diskStorage(
-            {
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                    cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-                }
-            }
-        )
-    }))
+    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
     async create(@Body() people: CreatePeopleDto, @UploadedFiles(
         new ParseFilePipeBuilder()
             .addFileTypeValidator({
@@ -87,17 +78,7 @@ export class PeopleController {
     }
 
     @Patch(':id/images')
-    @UseInterceptors(FilesInterceptor('files', 10, {
-        storage: diskStorage(
-            {
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                    cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-                }
-            }
-        )
-    }))
+    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
     async appendImages(@Param('id') id: number, @UploadedFiles(new ParseFilePipeBuilder()
         .addFileTypeValidator({
             fileType: /^image\/(png|jpeg)$/,

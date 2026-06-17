@@ -10,33 +10,38 @@ export class CreatePeopleDto {
     name: string;
 
     @ApiProperty()
-    @IsNumberString()
-    @Type(() => Number)
-    height: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @Type(() => Number)
-    mass: number;
+    @IsString()
+    @IsOptional()
+    height: string;
 
     @ApiProperty()
     @IsString()
+    @IsOptional()
+    mass: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
     hair_color: string;
 
     @ApiProperty()
     @IsString()
+    @IsOptional()
     skin_color: string;
 
     @ApiProperty()
     @IsString()
+    @IsOptional()
     eye_color: string;
 
     @ApiProperty()
     @IsString()
+    @IsOptional()
     birth_year: string;
 
     @ApiProperty()
     @IsString()
+    @IsOptional()
     gender: string;
 
     @ApiProperty()
@@ -94,7 +99,8 @@ export class CreatePeopleDto {
 
     @ApiProperty()
     @IsString()
-    url: string
+    @IsNotEmpty()
+    url: string;
 
     @ApiProperty()
     @IsArray()

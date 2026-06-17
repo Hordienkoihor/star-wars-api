@@ -11,48 +11,43 @@ export class CreatePlanetDto {
     name: string;
 
     @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    diameter?: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    rotation_period: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    orbital_period: number;
-
-    @ApiProperty()
-    @IsNotEmpty()
-    gravity: string;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    population: number;
+    @IsString()
+    @IsOptional()
+    diameter?: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
+    rotation_period: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    orbital_period: string;
+
+    @ApiProperty()
+    @IsOptional()
+    gravity: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    population: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
     climate: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     terrain: string;
 
     @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    surface_water: number;
+    @IsString()
+    @IsOptional()
+    surface_water: string;
 
     // @ApiProperty()
     // @IsNumberString()
@@ -70,7 +65,6 @@ export class CreatePlanetDto {
     @IsInt({each: true})
     films?: number[];
 
-
     @ApiProperty()
     @IsISO8601()
     created: string;
@@ -78,6 +72,11 @@ export class CreatePlanetDto {
     @ApiProperty()
     @IsISO8601()
     edited: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsNotEmpty()
+    url: string;
 
     @Column({ type: 'json', nullable: true })
     imgs: string[];

@@ -14,44 +14,43 @@ export class CreateSpeciesDto {
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     classification: string;
 
     @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    average_height: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    average_lifespan: number;
+    @IsString()
+    @IsOptional()
+    average_height: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
+    average_lifespan: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
     eye_colors: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     hair_colors: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     skin_colors: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     language: string;
 
     @ApiProperty()
-    @IsString()
-    homeworld: string;
+    @IsOptional()
+    @IsInt()
+    homeworld: number | null;
 
     @ApiProperty({
         description: 'array of people related to species ids',
@@ -80,6 +79,11 @@ export class CreateSpeciesDto {
     @ApiProperty()
     @IsISO8601()
     edited: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsNotEmpty()
+    url: string;
 
     @ApiProperty()
     @IsArray()

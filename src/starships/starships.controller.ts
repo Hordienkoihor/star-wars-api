@@ -21,6 +21,7 @@ import type {Response} from "express";
 import {createReadStream, existsSync} from "fs";
 import {StarshipsService} from "./starships.service";
 import {CreateStarshipDto} from "./model/starship.dto";
+import {multerConfig} from "../multer/multer-config.helper";
 
 @Controller('starships')
 export class StarshipsController {
@@ -48,17 +49,7 @@ export class StarshipsController {
     }
 
     @Post()
-    @UseInterceptors(FilesInterceptor('files', 10, {
-        storage: diskStorage(
-            {
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                    cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-                }
-            }
-        )
-    }))
+    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
     async create(@Body() starshipDto: CreateStarshipDto, @UploadedFiles(
         new ParseFilePipeBuilder()
             .addFileTypeValidator({
@@ -86,17 +77,7 @@ export class StarshipsController {
     }
 
     @Patch(':id/images')
-    @UseInterceptors(FilesInterceptor('files', 10, {
-        storage: diskStorage(
-            {
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                    cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-                }
-            }
-        )
-    }))
+    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
     async appendImages(@Param('id') id: number, @UploadedFiles(new ParseFilePipeBuilder()
         .addFileTypeValidator({
             fileType: /^image\/(png|jpeg)$/,

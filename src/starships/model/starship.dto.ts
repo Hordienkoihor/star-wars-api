@@ -3,8 +3,6 @@ import {Type} from "class-transformer";
 import {ApiProperty} from "@nestjs/swagger";
 
 export class CreateStarshipDto {
-
-
     @ApiProperty()
     @IsString()
     @IsNotEmpty()
@@ -12,71 +10,64 @@ export class CreateStarshipDto {
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     model: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     starship_class: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     manufacturer: string;
 
     @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    cost_in_credits: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    length: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    crew: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    passengers: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    max_atmosphering_speed: number;
+    @IsString()
+    @IsOptional()
+    cost_in_credits: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
+    length: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    crew: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    passengers: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    max_atmosphering_speed: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
     hyperdrive_rating: string;
 
     @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    mglt: number;
+    @IsString()
+    @IsOptional()
+    mglt: string;
 
     @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    cargo_capacity: number;
+    @IsString()
+    @IsOptional()
+    cargo_capacity: string;
 
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
-    consumables: number;
+    @IsOptional()
+    consumables: string;
 
     @ApiProperty({
         description: 'array of films starship was spotted in ids',
@@ -105,6 +96,11 @@ export class CreateStarshipDto {
     @ApiProperty()
     @IsISO8601()
     edited: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsNotEmpty()
+    url: string;
 
     @ApiProperty()
     @IsArray()

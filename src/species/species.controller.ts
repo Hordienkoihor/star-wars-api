@@ -21,6 +21,7 @@ import type {Response} from "express";
 import {createReadStream, existsSync} from "fs";
 import {SpeciesService} from "./species.service";
 import {CreateSpeciesDto} from "./model/species.dto";
+import {multerConfig} from "../multer/multer-config.helper";
 
 @Controller('species')
 export class SpeciesController {
@@ -48,17 +49,7 @@ export class SpeciesController {
     }
 
     @Post()
-    @UseInterceptors(FilesInterceptor('files', 10, {
-        storage: diskStorage(
-            {
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                    cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-                }
-            }
-        )
-    }))
+    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
     async create(@Body() speciesDto: CreateSpeciesDto, @UploadedFiles(
         new ParseFilePipeBuilder()
             .addFileTypeValidator({
@@ -86,17 +77,7 @@ export class SpeciesController {
     }
 
     @Patch(':id/images')
-    @UseInterceptors(FilesInterceptor('files', 10, {
-        storage: diskStorage(
-            {
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                    cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-                }
-            }
-        )
-    }))
+    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
     async appendImages(@Param('id') id: number, @UploadedFiles(new ParseFilePipeBuilder()
         .addFileTypeValidator({
             fileType: /^image\/(png|jpeg)$/,
@@ -121,10 +102,11 @@ export class SpeciesController {
 
         species.imgs = [...(species.imgs || []), ...newImages];
 
-        const {people, films, ...speciesData} = species
+        const {people, films, homeworld, ...speciesData} = species
 
         await this.speciesService.update(id, {
             ...speciesData,
+            homeworld: homeworld ? homeworld.id : null,
             films: films ? films.map((f) => f.id) : [],
             people: people ? people.map((p) => p.id) : []
         })
@@ -154,10 +136,11 @@ export class SpeciesController {
 
         species.imgs = species.imgs.filter(name => !images.includes(name));
 
-        const {people, films, ...speciesData} = species
+        const {people, films, homeworld, ...speciesData} = species
 
         await this.speciesService.update(id, {
             ...speciesData,
+            homeworld: homeworld ? homeworld.id : null,
             films: films ? films.map((f) => f.id) : [],
             people: people ? people.map((p) => p.id) : []
         })

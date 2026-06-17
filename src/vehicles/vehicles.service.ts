@@ -35,6 +35,10 @@ export class VehiclesService {
         })
     }
 
+    async getByUrl(url: string) {
+        return await this.vehiclesRepository.findOne({where: {url}});
+    }
+
     async getAll() {
         return await this.vehiclesRepository.find();
     }

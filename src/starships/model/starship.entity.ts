@@ -1,4 +1,3 @@
-
 import {Column, Entity, ManyToMany, PrimaryGeneratedColumn} from "typeorm";
 import {Film} from "../../films/model/film.entity";
 import {People} from "../../people/model/people.entity";
@@ -11,47 +10,47 @@ export class Starship {
     @Column()
     name: string;
 
-    @Column()
+    @Column({nullable: true})
     model: string;
 
-    @Column()
+    @Column({nullable: true})
     starship_class: string;
 
-    @Column()
+    @Column({nullable: true})
     manufacturer: string;
 
-    @Column()
-    cost_in_credits: number;
+    @Column({nullable: true})
+    cost_in_credits: string;
 
-    @Column()
-    length: number;
+    @Column({nullable: true})
+    length: string;
 
-    @Column()
-    crew: number;
+    @Column({nullable: true})
+    crew: string;
 
-    @Column()
-    passengers: number;
+    @Column({nullable: true})
+    passengers: string;
 
-    @Column()
-    max_atmosphering_speed: number;
+    @Column({nullable: true})
+    max_atmosphering_speed: string;
 
-    @Column()
+    @Column({nullable: true})
     hyperdrive_rating: string;
 
-    @Column()
-    mglt: number;
+    @Column({nullable: true})
+    mglt: string;
 
-    @Column()
-    cargo_capacity: number;
+    @Column({nullable: true})
+    cargo_capacity: string;
 
 
-    @Column()
-    consumables: number;
+    @Column({nullable: true})
+    consumables: string;
 
-    @ManyToMany(() => Film, (film) => film.starships)
+    @ManyToMany(() => Film, (film) => film.starships, {nullable: true})
     films: Film[];
 
-    @ManyToMany(() => People, (person) => person.starships)
+    @ManyToMany(() => People, (person) => person.starships, {nullable: true})
     pilots: People[];
 
     @Column()
@@ -59,6 +58,9 @@ export class Starship {
 
     @Column()
     edited: string;
+
+    @Column()
+    url: string;
 
     @Column({type: 'json', nullable: true})
     imgs: string[];

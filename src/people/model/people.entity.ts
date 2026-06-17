@@ -13,25 +13,25 @@ export class People {
     @Column()
     name: string;
 
-    @Column()
-    height: number;
+    @Column({nullable: true})
+    height: string;
 
-    @Column()
-    mass: number;
+    @Column({nullable: true})
+    mass: string;
 
-    @Column()
+    @Column({nullable: true})
     hair_color: string;
 
-    @Column()
+    @Column({nullable: true})
     skin_color: string;
 
-    @Column()
+    @Column({nullable: true})
     eye_color: string;
 
-    @Column()
+    @Column({nullable: true})
     birth_year: string;
 
-    @Column()
+    @Column({nullable: true})
     gender: string;
 
     @ManyToOne(() => Planet, (planet) => planet.residents, {nullable: true})

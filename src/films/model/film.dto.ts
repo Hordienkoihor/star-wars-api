@@ -92,6 +92,11 @@ export class CreateFilmDto {
     edited: string;
 
     @ApiProperty()
+    @IsString()
+    @IsNotEmpty()
+    url: string;
+
+    @ApiProperty()
     @IsArray()
     @IsString({each: true})
     imgs: string[];

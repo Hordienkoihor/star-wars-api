@@ -35,6 +35,10 @@ export class StarshipsService {
         })
     }
 
+    async getByUrl(url: string) {
+        return await this.starshipRepository.findOne({where: {url}});
+    }
+
     async getAll() {
         return await this.starshipRepository.find();
     }

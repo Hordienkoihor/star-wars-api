@@ -10,58 +10,52 @@ export class CreateVehicleDto {
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     model: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     vehicle_class: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     manufacturer: string;
 
     @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    length: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    cost_in_credits: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    crew: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    passengers: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    max_atmosphering_speed: number;
-
-    @ApiProperty()
-    @IsNumberString()
-    @IsNotEmpty()
-    @Type(() => Number)
-    cargo_capacity: number;
+    @IsString()
+    @IsOptional()
+    length: string;
 
     @ApiProperty()
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
+    cost_in_credits: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    crew: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    passengers: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    max_atmosphering_speed: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
+    cargo_capacity: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsOptional()
     consumables: string;
 
     @ApiProperty({
@@ -91,6 +85,11 @@ export class CreateVehicleDto {
     @ApiProperty()
     @IsISO8601()
     edited: string;
+
+    @ApiProperty()
+    @IsString()
+    @IsNotEmpty()
+    url: string;
 
     @ApiProperty()
     @IsArray()

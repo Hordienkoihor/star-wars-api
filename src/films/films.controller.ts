@@ -22,12 +22,14 @@ import fsPromise from "fs/promises";
 import Path from "node:path";
 import type {Response} from "express";
 import {createReadStream, existsSync} from "fs";
+import {multerConfig} from "../multer/multer-config.helper";
 
 @Controller('films')
 export class FilmsController {
     private readonly baseImagePath = './uploads/film'
 
-    constructor(private readonly filmService: FilmsService) {}
+    constructor(private readonly filmService: FilmsService) {
+    }
 
     @Get()
     async getForPage(@Query('offset') offset: number, @Query('limit') limit: number) {
@@ -45,21 +47,11 @@ export class FilmsController {
 
     @Get('/:id')
     async getOne(@Param('id') id: number) {
-        return !id ? undefined : await this.filmService.get(id)
+        return await this.filmService.get(id)
     }
 
     @Post()
-    @UseInterceptors(FilesInterceptor('files', 10, {
-        storage: diskStorage(
-            {
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                    cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-                }
-            }
-        )
-    }))
+    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
     async create(@Body() film: CreateFilmDto, @UploadedFiles(
         new ParseFilePipeBuilder()
             .addFileTypeValidator({
@@ -87,17 +79,7 @@ export class FilmsController {
     }
 
     @Patch(':id/images')
-    @UseInterceptors(FilesInterceptor('files', 10, {
-        storage: diskStorage(
-            {
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-                    cb(null, `${uniqueSuffix}${extname(file.originalname)}`);
-                }
-            }
-        )
-    }))
+    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
     async appendImages(@Param('id') id: number, @UploadedFiles(new ParseFilePipeBuilder()
         .addFileTypeValidator({
             fileType: /^image\/(png|jpeg)$/,
