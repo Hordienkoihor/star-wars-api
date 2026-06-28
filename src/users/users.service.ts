@@ -1,4 +1,11 @@
-import {BadRequestException, ConflictException, Inject, Injectable, InternalServerErrorException} from '@nestjs/common';
+import {
+    BadRequestException,
+    ConflictException,
+    Inject,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException
+} from '@nestjs/common';
 import {Repository} from "typeorm";
 import {User} from "./model/user.entity";
 import {CreateUserDto} from "./model/user.dto";
@@ -13,7 +20,7 @@ export class UsersService {
 
     async create(createUserDto: CreateUserDto) {
         try {
-            const hashedPassword =  await bcrypt.hash(createUserDto.password, this.saltOrRounds);
+            const hashedPassword = await bcrypt.hash(createUserDto.password, this.saltOrRounds);
 
             const user = this.userRepository.create({
                 ...createUserDto,
@@ -29,4 +36,17 @@ export class UsersService {
             throw new InternalServerErrorException('An unexpected error occurred');
         }
     }
+
+    async findOne(username: string) {
+
+        const user = await this.userRepository.findOne({where: {username}});
+
+        if (!user) {
+            throw new NotFoundException('No user with this username exists');
+        }
+
+        return user;
+    }
+
+
 }
