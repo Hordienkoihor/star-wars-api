@@ -4,18 +4,13 @@ import { AuthService } from './auth.service';
 import {UsersModule} from "../users/users.module";
 import {ConfigModule, ConfigService} from "@nestjs/config";
 import {JwtModule} from "@nestjs/jwt";
+import {PassportModule} from "@nestjs/passport";
+import {LocalStrategy} from "./local.strategy";
 
 @Module({
-  controllers: [AuthController],
-  providers: [AuthService],
-  imports: [UsersModule, ConfigModule, JwtModule.registerAsync({
-    imports: [ConfigModule],
-    inject: [ConfigService],
-    useFactory: async (configService: ConfigService) => ({
-      secret: configService.get<string>('SECRET'),
-    })
-
-  })],
+  // controllers: [AuthController],
+  providers: [AuthService, LocalStrategy],
+  imports: [UsersModule, PassportModule],
 
 })
 export class AuthModule {}

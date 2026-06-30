@@ -5,6 +5,7 @@ import {vehiclesProviders} from "./vehicles.providers";
 import {HttpModule} from "@nestjs/axios";
 import {DatabaseModule} from "../database/database.module";
 
+
 @Module({
     imports: [DatabaseModule, HttpModule],
     providers: [VehiclesService, ...vehiclesProviders],
