@@ -1,6 +1,6 @@
 import {Inject, Injectable} from "@nestjs/common";
 import {People} from "./model/people.entity";
-import {Repository} from "typeorm";
+import {Like, Repository} from "typeorm";
 import {CreatePeopleDto} from "./model/people.dto";
 import {HttpService} from "@nestjs/axios";
 import {firstValueFrom} from "rxjs";
@@ -106,8 +106,8 @@ export class PeopleService {
     }
 
     async getByName(name: string) {
-        return await this.peopleRepository.findOne({
-            where: {name}
+        return await this.peopleRepository.find({
+            where: {name: Like(`%${name}%`)}
         })
     }
 

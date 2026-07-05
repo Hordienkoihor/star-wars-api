@@ -40,6 +40,11 @@ export class VehiclesController {
         return await this.vehiclesService.getSinglePage()
     }
 
+    @Get()
+    async search(@Query('search') name: string) {
+        return this.vehiclesService.getByName(name)
+    }
+
     @Get('/all')
     async getAllPlanets() {
         return await this.vehiclesService.getAll()

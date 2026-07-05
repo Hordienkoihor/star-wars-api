@@ -38,6 +38,11 @@ export class SpeciesController {
         return await this.speciesService.getSinglePage()
     }
 
+    @Get()
+    async search(@Query('search') name: string) {
+        return this.speciesService.getByName(name)
+    }
+
     @Get('/all')
     async getAllPlanets() {
         return await this.speciesService.getAll()

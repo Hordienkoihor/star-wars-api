@@ -1,5 +1,5 @@
 import {BadRequestException, Inject, Injectable} from '@nestjs/common';
-import {Repository} from "typeorm";
+import {Like, Repository} from "typeorm";
 import {Film} from "./model/film.entity";
 import {HttpService} from "@nestjs/axios";
 import {CreateFilmDto} from "./model/film.dto";
@@ -41,8 +41,9 @@ export class FilmsService {
     }
 
     async getByTitle(title: string) {
-        return await this.filmRepository.findOne({where: {title}});
+        return await this.filmRepository.find({where: {title: Like(`%${title}%`)}});
     }
+
 
     async getByUrl(url: string) {
         return await this.filmRepository.findOne({where: {url}});
@@ -50,15 +51,15 @@ export class FilmsService {
 
     async getAll() {
         return await this.filmRepository.find(
-        //     {
-        //     relations: {
-        //         characters: true,
-        //         species: true,
-        //         vehicles: true,
-        //         starships: true,
-        //         planets: true,
-        //     }
-        // }
+            //     {
+            //     relations: {
+            //         characters: true,
+            //         species: true,
+            //         vehicles: true,
+            //         starships: true,
+            //         planets: true,
+            //     }
+            // }
         );
     }
 

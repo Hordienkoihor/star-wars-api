@@ -45,6 +45,11 @@ export class FilmsController {
         return await this.filmService.getAll()
     }
 
+    @Get()
+    async search(@Query('search') search: string) {
+        return await this.filmService.getByTitle(search)
+    }
+
     @Get('/:id')
     async getOne(@Param('id') id: number) {
         return await this.filmService.get(id)

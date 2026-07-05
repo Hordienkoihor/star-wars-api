@@ -39,6 +39,11 @@ export class PeopleController {
         return await this.peopleService.getSinglePage()
     }
 
+    @Get()
+    async search(@Query('search') name: string ) {
+        return await this.peopleService.getByName(name)
+    }
+
     @Get('/all')
     async getAllPeople() {
         return await this.peopleService.getAll()

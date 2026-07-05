@@ -38,6 +38,11 @@ export class PlanetsController {
         return await this.planetService.getSinglePage()
     }
 
+    @Get()
+    async search(@Query('search') name: string) {
+        return await this.planetService.getByName(name)
+    }
+
     @Get('/all')
     async getAllPlanets() {
         return await this.planetService.getAll()

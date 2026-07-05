@@ -1,5 +1,5 @@
 import {BadRequestException, Inject, Injectable} from '@nestjs/common';
-import {Repository} from "typeorm";
+import {Like, Repository} from "typeorm";
 import {Species} from "../species/model/species.entity";
 import {HttpService} from "@nestjs/axios";
 import {Starship} from "./model/starship.entity";
@@ -33,6 +33,10 @@ export class StarshipsService {
                 films: true,
             }
         })
+    }
+
+    async getByName(name: string) {
+        return await this.starshipRepository.find({where: {name: Like(`%${name}%`)}});
     }
 
     async getByUrl(url: string) {

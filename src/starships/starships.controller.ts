@@ -22,6 +22,7 @@ import {createReadStream, existsSync} from "fs";
 import {StarshipsService} from "./starships.service";
 import {CreateStarshipDto} from "./model/starship.dto";
 import {multerConfig} from "../multer/multer-config.helper";
+import {Starship} from "./model/starship.entity";
 
 @Controller('starships')
 export class StarshipsController {
@@ -36,6 +37,11 @@ export class StarshipsController {
             return await this.starshipService.getSinglePage(offset, limit)
         }
         return await this.starshipService.getSinglePage()
+    }
+
+    @Get()
+    async search(@Query('search') name: string) {
+        return this.starshipService.getByName(name)
     }
 
     @Get('/all')
