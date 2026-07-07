@@ -40,8 +40,12 @@ export class FilmsService {
         })
     }
 
-    async getByTitle(title: string) {
-        return await this.filmRepository.find({where: {title: Like(`%${title}%`)}});
+    async getByTitle(title: string, offset?: number, limit?: number) {
+        return await this.filmRepository.find({
+            where: {title: Like(`%${title}%`)},
+            skip: offset ? offset : undefined,
+            take: limit ? limit : undefined,
+        });
     }
 
 

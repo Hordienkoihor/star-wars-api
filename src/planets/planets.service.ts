@@ -33,8 +33,12 @@ export class PlanetsService {
         })
     }
 
-    async getByName(name: string) {
-        return await this.planetRepository.find({where: {name: Like(`%${name}%`)}})
+    async getByName(name: string, offset?: number, limit?: number) {
+        return await this.planetRepository.find({
+            where: {name: Like(`%${name}%`)},
+            skip: offset ? offset : undefined,
+            take: limit ? limit : undefined,
+        })
     }
 
     async getByUrl(url: string) {

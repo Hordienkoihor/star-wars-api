@@ -37,8 +37,12 @@ export class SpeciesService {
         })
     }
 
-    async getByName(name: string) {
-        return await this.speciesRepository.find({where: {name: Like(`%${name}%`)}});
+    async getByName(name: string, offset?: number, limit?: number) {
+        return await this.speciesRepository.find({
+            where: {name: Like(`%${name}%`)},
+            skip: offset ? offset : 0,
+            take: limit ? limit : 0,
+        });
     }
 
     async getByUrl(url: string) {

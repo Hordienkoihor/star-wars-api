@@ -46,8 +46,15 @@ export class FilmsController {
     }
 
     @Get()
-    async search(@Query('search') search: string) {
-        return await this.filmService.getByTitle(search)
+    async search(
+        @Query('search') search: string,
+        @Query('offset') offset: string,
+        @Query('limit') limit: number
+    ) {
+        const parsedOffset = offset ? +offset : undefined;
+        const parsedLimit = limit ? +limit : undefined;
+
+        return await this.filmService.getByTitle(search, parsedOffset, parsedLimit)
     }
 
     @Get('/:id')

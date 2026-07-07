@@ -39,8 +39,15 @@ export class PlanetsController {
     }
 
     @Get()
-    async search(@Query('search') name: string) {
-        return await this.planetService.getByName(name)
+    async search(
+        @Query('search') name: string,
+        @Query('offset') offset: string,
+        @Query('limit') limit: string
+    ) {
+        const parsedOffset = offset ? +offset : undefined;
+        const parsedLimit = limit ? +limit : undefined;
+
+        return await this.planetService.getByName(name, parsedOffset, parsedLimit)
     }
 
     @Get('/all')

@@ -105,9 +105,12 @@ export class PeopleService {
         })
     }
 
-    async getByName(name: string) {
+    async getByName(name: string, offset?: number, limit?: number) {
         return await this.peopleRepository.find({
-            where: {name: Like(`%${name}%`)}
+            where: {name: Like(`%${name}%`)},
+            skip: offset ? offset : undefined,
+            take: limit ? limit : undefined,
+
         })
     }
 

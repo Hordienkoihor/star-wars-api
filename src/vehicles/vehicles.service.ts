@@ -19,8 +19,8 @@ export class VehiclesService {
 
         const vehicle = this.vehiclesRepository.create({
             ...vehicleData,
-            pilots: pilots ? pilots.map((id) => ({ id: Number(id)})) : [],
-            films: films ? films.map((id) => ({ id: Number(id)})) : [],
+            pilots: pilots ? pilots.map((id) => ({id: Number(id)})) : [],
+            films: films ? films.map((id) => ({id: Number(id)})) : [],
         });
         return await this.vehiclesRepository.save(vehicle);
     }
@@ -35,8 +35,12 @@ export class VehiclesService {
         })
     }
 
-    async getByName(name: string) {
-        return await this.vehiclesRepository.find({where: {name: Like(`%${name}%`)}});
+    async getByName(name: string, offset?: number, limit?: number) {
+        return await this.vehiclesRepository.find({
+            where: {name: Like(`%${name}%`)},
+            skip: offset ? offset : undefined,
+            take: limit ? limit : undefined
+        })
     }
 
     async getByUrl(url: string) {
@@ -69,8 +73,8 @@ export class VehiclesService {
         const vehicle = this.vehiclesRepository.create({
             id: id,
             ...vehicleData,
-            pilots: pilots ? pilots.map((id) => ({ id: Number(id)})) : [],
-            films: films ? films.map((id) => ({ id: Number(id)})) : [],
+            pilots: pilots ? pilots.map((id) => ({id: Number(id)})) : [],
+            films: films ? films.map((id) => ({id: Number(id)})) : [],
         });
 
 

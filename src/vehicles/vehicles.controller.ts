@@ -41,8 +41,11 @@ export class VehiclesController {
     }
 
     @Get()
-    async search(@Query('search') name: string) {
-        return this.vehiclesService.getByName(name)
+    async search(@Query('search') name: string, @Query('offset') offset: string, @Query('limit') limit: string) {
+        const parsedLimit = limit ? +limit : undefined;
+        const parsedOffset = offset ? +limit : undefined;
+
+        return this.vehiclesService.getByName(name, parsedOffset, parsedLimit);
     }
 
     @Get('/all')

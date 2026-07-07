@@ -23,6 +23,7 @@ import {StarshipsService} from "./starships.service";
 import {CreateStarshipDto} from "./model/starship.dto";
 import {multerConfig} from "../multer/multer-config.helper";
 import {Starship} from "./model/starship.entity";
+import {of} from "rxjs";
 
 @Controller('starships')
 export class StarshipsController {
@@ -40,8 +41,11 @@ export class StarshipsController {
     }
 
     @Get()
-    async search(@Query('search') name: string) {
-        return this.starshipService.getByName(name)
+    async search(@Query('search') name: string, @Query('offset') offset?: string, @Query('limit') limit?: string) {
+        const parsedOffset = offset ? +offset : undefined;
+        const parsedLimit = limit ? +limit : undefined;
+
+        return this.starshipService.getByName(name, parsedOffset, parsedLimit);
     }
 
     @Get('/all')
