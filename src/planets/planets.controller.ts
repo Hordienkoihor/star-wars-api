@@ -31,24 +31,35 @@ export class PlanetsController {
     }
 
     @Get()
-    async getForPage(@Query('offset') offset: number, @Query('limit') limit: number) {
-        if (offset && limit) {
-            return await this.planetService.getSinglePage(offset, limit)
-        }
-        return await this.planetService.getSinglePage()
-    }
-
-    @Get()
-    async search(
+    async getForPage(
         @Query('search') name: string,
-        @Query('offset') offset: string,
-        @Query('limit') limit: string
+        @Query('offset') offset: number,
+        @Query('limit') limit: number
     ) {
         const parsedOffset = offset ? +offset : undefined;
         const parsedLimit = limit ? +limit : undefined;
 
-        return await this.planetService.getByName(name, parsedOffset, parsedLimit)
+        if (name) {
+            return await this.planetService.getByName(name, parsedOffset, parsedLimit);
+        }
+
+        if (parsedOffset !== undefined && parsedLimit !== undefined) {
+            return await this.planetService.getSinglePage(parsedOffset, parsedLimit)
+        }
+        return await this.planetService.getSinglePage()
     }
+
+    // @Get()
+    // async search(
+    //     @Query('search') name: string,
+    //     @Query('offset') offset: string,
+    //     @Query('limit') limit: string
+    // ) {
+    //     const parsedOffset = offset ? +offset : undefined;
+    //     const parsedLimit = limit ? +limit : undefined;
+    //
+    //     return await this.planetService.getByName(name, parsedOffset, parsedLimit)
+    // }
 
     @Get('/all')
     async getAllPlanets() {

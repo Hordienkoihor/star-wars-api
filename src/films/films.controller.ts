@@ -33,8 +33,20 @@ export class FilmsController {
     }
 
     @Get()
-    async getForPage(@Query('offset') offset: number, @Query('limit') limit: number) {
-        if (offset && limit) {
+    async getForPage(
+        @Query('search') search: string,
+        @Query('offset') offset: number,
+        @Query('limit') limit: number
+    ) {
+        const parsedOffset = offset ? +offset : undefined;
+        const parsedLimit = limit ? +limit : undefined;
+
+        if (search) {
+            return await this.filmService.search(search, parsedOffset, parsedLimit);
+        }
+
+
+        if (parsedOffset !== undefined && parsedLimit !== undefined) {
             return await this.filmService.getSinglePage(offset, limit)
         }
 
@@ -46,17 +58,17 @@ export class FilmsController {
         return await this.filmService.getAll()
     }
 
-    @Get()
-    async search(
-        @Query('search') search: string,
-        @Query('offset') offset: string,
-        @Query('limit') limit: number
-    ) {
-        const parsedOffset = offset ? +offset : undefined;
-        const parsedLimit = limit ? +limit : undefined;
-
-        return await this.filmService.search(search, parsedOffset, parsedLimit)
-    }
+    // @Get()
+    // async search(
+    //     @Query('search') search: string,
+    //     @Query('offset') offset: string,
+    //     @Query('limit') limit: number
+    // ) {
+    //     const parsedOffset = offset ? +offset : undefined;
+    //     const parsedLimit = limit ? +limit : undefined;
+    //
+    //     return await this.filmService.search(search, parsedOffset, parsedLimit)
+    // }
 
     @Get('/:id')
     async getOne(@Param('id') id: number) {

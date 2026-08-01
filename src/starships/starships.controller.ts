@@ -33,20 +33,30 @@ export class StarshipsController {
     }
 
     @Get()
-    async getForPage(@Query('offset') offset: number, @Query('limit') limit: number) {
-        if (offset && limit) {
+    async getForPage(
+        @Query('search') name: string,
+        @Query('offset') offset: number,
+        @Query('limit') limit: number
+    ) {
+        const parsedOffset = offset ? +offset : undefined;
+        const parsedLimit = limit ? +limit : undefined;
+        if (name) {
+            return await this.starshipService.search(name, parsedOffset, parsedLimit);
+        }
+
+        if (parsedOffset !== undefined && parsedLimit !== undefined) {
             return await this.starshipService.getSinglePage(offset, limit)
         }
         return await this.starshipService.getSinglePage()
     }
 
-    @Get()
-    async search(@Query('search') name: string, @Query('offset') offset?: string, @Query('limit') limit?: string) {
-        const parsedOffset = offset ? +offset : undefined;
-        const parsedLimit = limit ? +limit : undefined;
-
-        return this.starshipService.search(name, parsedOffset, parsedLimit);
-    }
+    // @Get()
+    // async search(@Query('search') name: string, @Query('offset') offset?: string, @Query('limit') limit?: string) {
+    //     const parsedOffset = offset ? +offset : undefined;
+    //     const parsedLimit = limit ? +limit : undefined;
+    //
+    //     return this.starshipService.search(name, parsedOffset, parsedLimit);
+    // }
 
     @Get('/all')
     async getAllPlanets() {

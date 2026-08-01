@@ -32,15 +32,7 @@ export class PeopleController {
     }
 
     @Get()
-    async getForPage(@Query('offset') offset: number, @Query('limit') limit: number) {
-        if (offset && limit) {
-            return await this.peopleService.getSinglePage(offset, limit)
-        }
-        return await this.peopleService.getSinglePage()
-    }
-
-    @Get()
-    async search(
+    async getForPage(
         @Query('search') name: string,
         @Query('offset') offset: string,
         @Query('limit') limit: string
@@ -48,8 +40,28 @@ export class PeopleController {
         const parsedOffset = offset ? +offset : undefined;
         const parsedLimit = limit ? +limit : undefined;
 
-        return await this.peopleService.search(name, parsedOffset, parsedLimit)
+        if (name) {
+            return await this.peopleService.search(name, parsedOffset, parsedLimit);
+        }
+
+        if (parsedOffset !== undefined && parsedLimit !== undefined) {
+            return await this.peopleService.getSinglePage(parsedOffset, parsedLimit);
+        }
+
+        return await this.peopleService.getSinglePage();
     }
+
+    // @Get()
+    // async search(
+    //     @Query('search') name: string,
+    //     @Query('offset') offset: string,
+    //     @Query('limit') limit: string
+    // ) {
+    //     const parsedOffset = offset ? +offset : undefined;
+    //     const parsedLimit = limit ? +limit : undefined;
+    //
+    //     return await this.peopleService.search(name, parsedOffset, parsedLimit)
+    // }
 
     @Get('/all')
     async getAllPeople() {
@@ -58,7 +70,7 @@ export class PeopleController {
 
     @Get(':id')
     async getOne(@Param('id') id: number) {
-       return await this.peopleService.get(id)
+        return await this.peopleService.get(id)
     }
 
     @Post()

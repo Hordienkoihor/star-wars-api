@@ -33,20 +33,31 @@ export class VehiclesController {
     }
 
     @Get()
-    async getForPage(@Query('offset') offset: number, @Query('limit') limit: number) {
-        if (offset && limit) {
+    async getForPage(
+        @Query('search') name: string,
+        @Query('offset') offset: number,
+        @Query('limit') limit: number
+    ) {
+        const parsedLimit = limit ? +limit : undefined;
+        const parsedOffset = offset ? +limit : undefined;
+
+        if (name) {
+            return await this.vehiclesService.search(name, parsedOffset, parsedLimit);
+        }
+
+        if (parsedOffset !== undefined && parsedLimit !== undefined) {
             return await this.vehiclesService.getSinglePage(offset, limit)
         }
         return await this.vehiclesService.getSinglePage()
     }
 
-    @Get()
-    async search(@Query('search') name: string, @Query('offset') offset: string, @Query('limit') limit: string) {
-        const parsedLimit = limit ? +limit : undefined;
-        const parsedOffset = offset ? +limit : undefined;
-
-        return this.vehiclesService.search(name, parsedOffset, parsedLimit);
-    }
+    // @Get()
+    // async search(@Query('search') name: string, @Query('offset') offset: string, @Query('limit') limit: string) {
+    //     const parsedLimit = limit ? +limit : undefined;
+    //     const parsedOffset = offset ? +limit : undefined;
+    //
+    //     return this.vehiclesService.search(name, parsedOffset, parsedLimit);
+    // }
 
     @Get('/all')
     async getAllPlanets() {
