@@ -1,7 +1,7 @@
 import {ApiProperty} from "@nestjs/swagger";
 import {IsArray, IsInt, IsISO8601, IsNotEmpty, IsNumberString, IsOptional, IsString} from "class-validator";
 import {Column} from "typeorm";
-import {Type} from "class-transformer";
+import {Transform, Type} from "class-transformer";
 
 export class CreatePlanetDto {
 
@@ -59,6 +59,12 @@ export class CreatePlanetDto {
         description: 'array of films planet was spotted in ids',
         type: [Number],
         required: false,
+    })
+    @Transform(({value}) => {
+        if (!value) {
+            return [];
+        }
+        return (Array.isArray(value) ? value : [value].map(Number));
     })
     @IsArray()
     @IsOptional()

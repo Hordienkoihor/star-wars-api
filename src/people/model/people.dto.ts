@@ -1,5 +1,5 @@
 import {IsArray, IsInt, IsISO8601, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString} from "class-validator";
-import {Type} from "class-transformer";
+import {Transform, Type} from "class-transformer";
 import {ApiProperty} from "@nestjs/swagger";
 
 export class CreatePeopleDto {
@@ -45,6 +45,12 @@ export class CreatePeopleDto {
     gender: string;
 
     @ApiProperty()
+    @Transform(({value}) => {
+        if (!value) {
+            return null;
+        }
+        return (IsNumber(value) ? value : Number(value));
+    })
     @IsOptional()
     @IsInt()
     homeworld: number | null;
@@ -53,6 +59,12 @@ export class CreatePeopleDto {
         description: 'array of films person was spotted in ids',
         type: [Number],
         required: false,
+    })
+    @Transform(({value}) => {
+        if (!value) {
+            return [];
+        }
+        return (Array.isArray(value) ? value : [value].map(Number));
     })
     @IsArray()
     @IsOptional()
@@ -64,6 +76,12 @@ export class CreatePeopleDto {
         type: [Number],
         required: false,
     })
+    @Transform(({value}) => {
+        if (!value) {
+            return [];
+        }
+        return (Array.isArray(value) ? value : [value].map(Number));
+    })
     @IsArray()
     @IsOptional()
     @IsInt({each: true})
@@ -74,6 +92,12 @@ export class CreatePeopleDto {
         type: [Number],
         required: false,
     })
+    @Transform(({value}) => {
+        if (!value) {
+            return [];
+        }
+        return (Array.isArray(value) ? value : [value].map(Number));
+    })
     @IsArray()
     @IsOptional()
     @IsInt({each: true})
@@ -83,6 +107,12 @@ export class CreatePeopleDto {
         description: 'array of starships person was spotted piloting ids',
         type: [Number],
         required: false,
+    })
+    @Transform(({value}) => {
+        if (!value) {
+            return [];
+        }
+        return (Array.isArray(value) ? value : [value].map(Number));
     })
     @IsArray()
     @IsOptional()

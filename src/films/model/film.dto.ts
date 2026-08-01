@@ -1,4 +1,5 @@
 import {ApiProperty} from "@nestjs/swagger";
+import {Transform, Type} from "class-transformer";
 import {IsArray, IsInt, IsISO8601, IsNotEmpty, IsNumber, IsOptional, IsString} from "class-validator";
 
 export class CreateFilmDto {
@@ -9,6 +10,7 @@ export class CreateFilmDto {
     title: string;
 
     @ApiProperty()
+    @Type(() => Number)
     @IsNumber()
     @IsNotEmpty()
     episode_id: number;
@@ -38,6 +40,11 @@ export class CreateFilmDto {
         type: [Number],
         required: false,
     })
+    @Transform(({ value }) => {
+        if (!value) return [];
+        const array = Array.isArray(value) ? value : [value];
+        return array.map(Number);
+    })
     @IsArray()
     @IsOptional()
     @IsInt({each: true})
@@ -47,6 +54,10 @@ export class CreateFilmDto {
         description: 'array of vehicles used in film ids',
         type: [Number],
         required: false,
+    })
+    @Transform(({ value }) => {
+        if (!value) return [];
+        return (Array.isArray(value) ? value : [value]).map(Number);
     })
     @IsArray()
     @IsOptional()
@@ -58,6 +69,10 @@ export class CreateFilmDto {
         type: [Number],
         required: false,
     })
+    @Transform(({ value }) => {
+        if (!value) return [];
+        return (Array.isArray(value) ? value : [value]).map(Number);
+    })
     @IsArray()
     @IsOptional()
     @IsInt({each: true})
@@ -68,6 +83,10 @@ export class CreateFilmDto {
         type: [Number],
         required: false,
     })
+    @Transform(({ value }) => {
+        if (!value) return [];
+        return (Array.isArray(value) ? value : [value]).map(Number);
+    })
     @IsArray()
     @IsOptional()
     @IsInt({each: true})
@@ -77,6 +96,10 @@ export class CreateFilmDto {
         description: 'array of planets used in film ids',
         type: [Number],
         required: false,
+    })
+    @Transform(({ value }) => {
+        if (!value) return [];
+        return (Array.isArray(value) ? value : [value]).map(Number);
     })
     @IsArray()
     @IsOptional()
@@ -96,6 +119,7 @@ export class CreateFilmDto {
     @IsNotEmpty()
     url: string;
 
+    @IsOptional()
     @ApiProperty()
     @IsArray()
     @IsString({each: true})

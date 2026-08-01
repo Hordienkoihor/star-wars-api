@@ -1,5 +1,5 @@
 import {IsArray, IsInt, IsISO8601, IsNotEmpty, IsNumber, IsNumberString, IsOptional, IsString} from "class-validator";
-import {Type} from "class-transformer";
+import {Transform, Type} from "class-transformer";
 import {ApiProperty} from "@nestjs/swagger";
 
 export class CreateStarshipDto {
@@ -74,6 +74,12 @@ export class CreateStarshipDto {
         type: [Number],
         required: false,
     })
+    @Transform(({value}) => {
+        if (!value) {
+            return [];
+        }
+        return (Array.isArray(value) ? value : [value].map(Number));
+    })
     @IsArray()
     @IsOptional()
     @IsInt({each: true})
@@ -83,6 +89,12 @@ export class CreateStarshipDto {
         description: 'array of people who piloted the starship ids',
         type: [Number],
         required: false,
+    })
+    @Transform(({value}) => {
+        if (!value) {
+            return [];
+        }
+        return (Array.isArray(value) ? value : [value].map(Number));
     })
     @IsArray()
     @IsOptional()

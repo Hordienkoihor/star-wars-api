@@ -47,7 +47,7 @@ export class SpeciesController {
         const parsedOffset = offset ? +offset : undefined;
         const parsedLimit = limit ? +limit : undefined;
 
-        return this.speciesService.getByName(name, parsedOffset, parsedLimit)
+        return this.speciesService.search(name, parsedOffset, parsedLimit)
     }
 
     @Get('/all')
@@ -70,6 +70,7 @@ export class SpeciesController {
             })
             .build({
                 errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+                fileIsRequired: false,
             }),
         ImageValidationPipe
     ) files: Array<Express.Multer.File>) {

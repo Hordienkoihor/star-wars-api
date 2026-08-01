@@ -105,13 +105,17 @@ export class PeopleService {
         })
     }
 
-    async getByName(name: string, offset?: number, limit?: number) {
+    async search(name: string, offset?: number, limit?: number) {
         return await this.peopleRepository.find({
             where: {name: Like(`%${name}%`)},
             skip: offset ? offset : undefined,
             take: limit ? limit : undefined,
 
         })
+    }
+
+    async getByName(name: string) {
+        return await this.peopleRepository.findOne({where: {name}})
     }
 
     async getByUrl(url: string) {

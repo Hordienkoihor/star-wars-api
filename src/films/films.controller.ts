@@ -7,7 +7,7 @@ import {
     ParseFilePipeBuilder, Patch,
     Post, Put,
     Query, Res, StreamableFile,
-    UploadedFiles,
+    UploadedFiles, UseGuards,
     UseInterceptors
 } from '@nestjs/common';
 import {FilmsService} from "./films.service";
@@ -23,6 +23,7 @@ import Path from "node:path";
 import type {Response} from "express";
 import {createReadStream, existsSync} from "fs";
 import {multerConfig} from "../multer/multer-config.helper";
+import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 
 @Controller('films')
 export class FilmsController {
@@ -54,7 +55,7 @@ export class FilmsController {
         const parsedOffset = offset ? +offset : undefined;
         const parsedLimit = limit ? +limit : undefined;
 
-        return await this.filmService.getByTitle(search, parsedOffset, parsedLimit)
+        return await this.filmService.search(search, parsedOffset, parsedLimit)
     }
 
     @Get('/:id')
@@ -63,6 +64,7 @@ export class FilmsController {
     }
 
     @Post()
+    @UseGuards(JwtAuthGuard)
     @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
     async create(@Body() film: CreateFilmDto, @UploadedFiles(
         new ParseFilePipeBuilder()
@@ -72,6 +74,7 @@ export class FilmsController {
             })
             .build({
                 errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+                fileIsRequired: false,
             }),
         ImageValidationPipe
     ) files: Array<Express.Multer.File>) {

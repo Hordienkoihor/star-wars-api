@@ -48,7 +48,7 @@ export class PeopleController {
         const parsedOffset = offset ? +offset : undefined;
         const parsedLimit = limit ? +limit : undefined;
 
-        return await this.peopleService.getByName(name, parsedOffset, parsedLimit)
+        return await this.peopleService.search(name, parsedOffset, parsedLimit)
     }
 
     @Get('/all')
@@ -71,6 +71,7 @@ export class PeopleController {
             })
             .build({
                 errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+                fileIsRequired: false,
             }),
         ImageValidationPipe
     ) files: Array<Express.Multer.File>) {

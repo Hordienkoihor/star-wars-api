@@ -35,12 +35,16 @@ export class VehiclesService {
         })
     }
 
-    async getByName(name: string, offset?: number, limit?: number) {
+    async search(name: string, offset?: number, limit?: number) {
         return await this.vehiclesRepository.find({
             where: {name: Like(`%${name}%`)},
             skip: offset ? offset : undefined,
             take: limit ? limit : undefined
         })
+    }
+
+    async getByName(name: string) {
+        await this.vehiclesRepository.findOne({where: {name}})
     }
 
     async getByUrl(url: string) {

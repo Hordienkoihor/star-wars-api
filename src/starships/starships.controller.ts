@@ -45,7 +45,7 @@ export class StarshipsController {
         const parsedOffset = offset ? +offset : undefined;
         const parsedLimit = limit ? +limit : undefined;
 
-        return this.starshipService.getByName(name, parsedOffset, parsedLimit);
+        return this.starshipService.search(name, parsedOffset, parsedLimit);
     }
 
     @Get('/all')
@@ -68,6 +68,7 @@ export class StarshipsController {
             })
             .build({
                 errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+                fileIsRequired: false,
             }),
         ImageValidationPipe
     ) files: Array<Express.Multer.File>) {

@@ -45,7 +45,7 @@ export class VehiclesController {
         const parsedLimit = limit ? +limit : undefined;
         const parsedOffset = offset ? +limit : undefined;
 
-        return this.vehiclesService.getByName(name, parsedOffset, parsedLimit);
+        return this.vehiclesService.search(name, parsedOffset, parsedLimit);
     }
 
     @Get('/all')
@@ -68,6 +68,7 @@ export class VehiclesController {
             })
             .build({
                 errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
+                fileIsRequired: false,
             }),
         ImageValidationPipe
     ) files: Array<Express.Multer.File>) {

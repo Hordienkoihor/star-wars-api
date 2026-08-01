@@ -1,6 +1,6 @@
 import {ApiProperty} from "@nestjs/swagger";
 import {IsArray, IsInt, IsISO8601, IsNotEmpty, IsNumberString, IsOptional, IsString} from "class-validator";
-import {Type} from "class-transformer";
+import {Transform, Type} from "class-transformer";
 import {Planet} from "../../planets/model/planet.entity";
 import {ManyToOne} from "typeorm";
 import {People} from "../../people/model/people.entity";
@@ -57,6 +57,12 @@ export class CreateSpeciesDto {
         type: [Number],
         required: false,
     })
+    @Transform(({value}) => {
+        if (!value) {
+            return [];
+        }
+        return (Array.isArray(value) ? value : [value].map(Number));
+    })
     @IsArray()
     @IsOptional()
     @IsInt({each: true})
@@ -66,6 +72,12 @@ export class CreateSpeciesDto {
         description: 'array of films species was spotted in ids',
         type: [Number],
         required: false,
+    })
+    @Transform(({value}) => {
+        if (!value) {
+            return [];
+        }
+        return (Array.isArray(value) ? value : [value].map(Number));
     })
     @IsArray()
     @IsOptional()

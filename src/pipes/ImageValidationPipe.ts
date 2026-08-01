@@ -5,7 +5,7 @@ import * as fs from "node:fs";
 export class ImageValidationPipe implements PipeTransform {
     async transform(files: Express.Multer.File[]): Promise<Express.Multer.File[]> {
         if (!files || !files.length) {
-            throw new BadRequestException("file is missing");
+            return files;
         }
 
         const {fileTypeFromFile} = await import('file-type')

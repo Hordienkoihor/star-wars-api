@@ -35,12 +35,16 @@ export class StarshipsService {
         })
     }
 
-    async getByName(name: string, offset?: number, limit?: number) {
+    async search(name: string, offset?: number, limit?: number) {
         return await this.starshipRepository.find({
             where: {name: Like(`%${name}%`)},
             skip: offset || undefined,
             take : limit ? limit : undefined
         });
+    }
+
+    async getByName(name: string) {
+        return await this.starshipRepository.findOne({where: {name}})
     }
 
     async getByUrl(url: string) {
