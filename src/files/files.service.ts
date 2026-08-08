@@ -1,23 +1,37 @@
-import {BadRequestException, Body, Injectable, NotFoundException, Param} from '@nestjs/common';
-import fsPromise from "fs/promises";
-import Path from "node:path";
-import {existsSync} from "fs";
+import {
+    BadRequestException,
+    Body,
+    Injectable,
+    InternalServerErrorException,
+    NotFoundException,
+    Param
+} from '@nestjs/common';
+import {ConfigService} from "@nestjs/config";
+import {PutObjectCommand, S3Client} from "@aws-sdk/client-s3";
 
 @Injectable()
 export class FilesService {
-    private readonly baseImagePath = './uploads'
+    private readonly s3Client: S3Client;
 
-    async removeImages(@Body() images: string[]) {
-        await Promise.all(images.map(async (image) => {
-                try {
-                    if (existsSync(image)) {
-                        await fsPromise.unlink(Path.join(this.baseImagePath, image));
-                    }
-                } catch (e) {
-                    console.error(e)
-                }
-            })
-        )
+    constructor(private readonly configService: ConfigService) {
+        this.s3Client = new S3Client({
+            region: this.configService.getOrThrow('AWS_S3_REGION')
+        });
     }
 
+    async upload(filename: string, file: Buffer): Promise<string> {
+       try {
+           await this.s3Client.send(
+               new PutObjectCommand({
+                   Bucket: 'starwars-api-bucket-265315779869-eu-north-1-an',
+                   Key: filename,
+                   Body: file
+               })
+           )
+
+           return filename;
+       } catch (e) {
+           throw new InternalServerErrorException(e);
+       }
+    }
 }

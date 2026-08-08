@@ -24,12 +24,13 @@ import type {Response} from "express";
 import {createReadStream, existsSync} from "fs";
 import {multerConfig} from "../multer/multer-config.helper";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
+import {FilesService} from "../files/files.service";
 
 @Controller('films')
 export class FilmsController {
     private readonly baseImagePath = './uploads/film'
 
-    constructor(private readonly filmService: FilmsService) {
+    constructor(private readonly filmService: FilmsService,  private readonly fileService: FilesService) {
     }
 
     @Get()
@@ -77,7 +78,7 @@ export class FilmsController {
 
     @Post()
     @UseGuards(JwtAuthGuard)
-    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
+    @UseInterceptors(FilesInterceptor('files', 10))
     async create(@Body() film: CreateFilmDto, @UploadedFiles(
         new ParseFilePipeBuilder()
             .addFileTypeValidator({
@@ -91,8 +92,13 @@ export class FilmsController {
         ImageValidationPipe
     ) files: Array<Express.Multer.File>) {
 
-        film.imgs = files?.map(file => file.filename) || [];
-        return await this.filmService.add(film)
+        if (files && files.length > 0) {
+            film.imgs = await Promise.all(
+                files.map( file =>  this.fileService.upload(file.originalname, file.buffer))
+            );
+        } else {
+            film.imgs = [];
+        }
     }
 
     @Put(':id')

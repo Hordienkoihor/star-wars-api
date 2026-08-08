@@ -3,10 +3,13 @@ import {Like, Repository} from "typeorm";
 import {Film} from "./model/film.entity";
 import {HttpService} from "@nestjs/axios";
 import {CreateFilmDto} from "./model/film.dto";
+import {FilesService} from "../files/files.service";
 
 @Injectable()
 export class FilmsService {
-    constructor(@Inject('FILM_REPOSITORY') private readonly filmRepository: Repository<Film>, private readonly httpService: HttpService) {
+    constructor(
+        @Inject('FILM_REPOSITORY') private readonly filmRepository: Repository<Film>,
+        private readonly httpService: HttpService) {
     }
 
     async add(filmDto: CreateFilmDto) {

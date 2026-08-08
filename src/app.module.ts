@@ -24,6 +24,7 @@ import { UsersModule } from './users/users.module';
         SeedModule,
         FilesModule,
         ConfigModule.forRoot({
+            isGlobal: true,
             envFilePath: '.development.env'
         }),
         AuthModule,
