@@ -30,7 +30,7 @@ import {FilesService} from "../files/files.service";
 export class FilmsController {
     private readonly baseImagePath = './uploads/film'
 
-    constructor(private readonly filmService: FilmsService,  private readonly fileService: FilesService) {
+    constructor(private readonly filmService: FilmsService, private readonly fileService: FilesService) {
     }
 
     @Get()
@@ -94,11 +94,13 @@ export class FilmsController {
 
         if (files && files.length > 0) {
             film.imgs = await Promise.all(
-                files.map( file =>  this.fileService.upload(file.originalname, file.buffer))
+                files.map(file => this.fileService.upload(file.originalname, file.buffer))
             );
         } else {
             film.imgs = [];
         }
+
+        return await this.filmService.add(film);
     }
 
     @Put(':id')
@@ -112,7 +114,7 @@ export class FilmsController {
     }
 
     @Patch(':id/images')
-    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
+    @UseInterceptors(FilesInterceptor('files', 10))
     async appendImages(@Param('id') id: number, @UploadedFiles(new ParseFilePipeBuilder()
         .addFileTypeValidator({
             fileType: /^image\/(png|jpeg)$/,
@@ -126,16 +128,18 @@ export class FilmsController {
         const film = await this.filmService.get(id)
 
         if (!film) {
-            files?.forEach((file: Express.Multer.File) => {
-                fs.unlinkSync(file.path);
-            })
-
             throw new NotFoundException('No such film found');
         }
 
-        const newImages = files?.map(file => file.filename) || [];
+        let newImages: string[] = [];
+        if (files && files.length > 0) {
+            newImages = await Promise.all(
+                files.map(file => this.fileService.upload(file.originalname, file.buffer))
+            );
+        }
 
         film.imgs = [...(film.imgs || []), ...newImages];
+
         await this.filmService.update(id, {
             ...film,
             characters: film.characters ? film.characters.map(c => c.id) : [],
@@ -156,7 +160,6 @@ export class FilmsController {
             throw new NotFoundException('No such film found');
 
         }
-
 
         if (!film.imgs) {
             throw new NotFoundException('film object has not images property');
@@ -180,11 +183,7 @@ export class FilmsController {
 
 
         await Promise.all(images.map(async (image) => {
-                try {
-                    await fsPromise.unlink(Path.join(this.baseImagePath, image));
-                } catch (e) {
-                    console.error(e)
-                }
+                this.fileService.remove(image)
             })
         )
     }
@@ -202,13 +201,8 @@ export class FilmsController {
             throw new NotFoundException('No such film found');
         }
 
-
-        if (!existsSync(Path.join(this.baseImagePath, image))) {
-            throw new NotFoundException('Image file is missing on server');
-        }
-
         res.set('Content-Type', 'image/jpeg');
-        const fileStream = createReadStream(Path.join(this.baseImagePath, image))
+        const fileStream = await this.fileService.getStream(image);
         return new StreamableFile(fileStream)
     }
 
