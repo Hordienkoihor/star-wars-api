@@ -8,15 +8,15 @@ export class ImageValidationPipe implements PipeTransform {
             return files;
         }
 
-        const {fileTypeFromFile} = await import('file-type')
+        const {fileTypeFromBuffer} = await import('file-type')
 
         const validTypes = ['image/png', 'image/jpg', 'image/jpeg'];
 
         for (const file of files) {
-            const signature = await fileTypeFromFile(file.path)
+            const signature = await fileTypeFromBuffer(file.buffer  )
 
             if (!signature || !validTypes.includes(signature.mime)) {
-                this.clean(files)
+                // this.clean(files)
                 throw new BadRequestException("Invalid signature");
             }
         }
@@ -24,11 +24,11 @@ export class ImageValidationPipe implements PipeTransform {
         return files;
     }
 
-    private clean(files: Express.Multer.File[]) {
-        for (const file of files) {
-            if (fs.existsSync(file.path)) {
-                fs.unlinkSync(file.path);
-            }
-        }
-    }
+    // private clean(files: Express.Multer.File[]) {
+    //     for (const file of files) {
+    //         if (fs.existsSync(file.path)) {
+    //             fs.unlinkSync(file.path);
+    //         }
+    //     }
+    // }
 }
