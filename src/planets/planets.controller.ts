@@ -22,12 +22,13 @@ import {createReadStream, existsSync} from "fs";
 import {PlanetsService} from "./planets.service";
 import {CreatePlanetDto} from "./model/planet.dto";
 import {multerConfig} from "../multer/multer-config.helper";
+import {FilesService} from "../files/files.service";
 
 @Controller('planets')
 export class PlanetsController {
     private readonly baseImagePath = './uploads/planets'
 
-    constructor(private readonly planetService: PlanetsService) {
+    constructor(private readonly planetService: PlanetsService, private readonly filesService: FilesService) {
     }
 
     @Get()
@@ -72,7 +73,7 @@ export class PlanetsController {
     }
 
     @Post()
-    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
+    @UseInterceptors(FilesInterceptor('files', 10))
     async create(@Body() planetDto: CreatePlanetDto, @UploadedFiles(
         new ParseFilePipeBuilder()
             .addFileTypeValidator({
@@ -86,7 +87,12 @@ export class PlanetsController {
         ImageValidationPipe
     ) files: Array<Express.Multer.File>) {
 
-        planetDto.imgs = files?.map(file => file.filename) || [];
+        if (files && files.length > 0) {
+            planetDto.imgs = await Promise.all(files?.map(file => this.filesService.upload(file.originalname, file.buffer)))
+
+        } else {
+            planetDto.imgs = []
+        }
         return await this.planetService.add(planetDto)
     }
 
@@ -101,7 +107,7 @@ export class PlanetsController {
     }
 
     @Patch(':id/images')
-    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
+    @UseInterceptors(FilesInterceptor('files', 10))
     async appendImages(@Param('id') id: number, @UploadedFiles(new ParseFilePipeBuilder()
         .addFileTypeValidator({
             fileType: /^image\/(png|jpeg)$/,
@@ -122,8 +128,12 @@ export class PlanetsController {
             throw new NotFoundException('No such planet found');
         }
 
-        const newImages = files?.map(file => file.filename) || [];
-
+        let newImages: string[] = []
+        if (files && files.length > 0) {
+            newImages = await Promise.all(
+                files.map(file => this.filesService.upload(file.originalname, file.buffer))
+            );
+        }
         planet.imgs = [...(planet.imgs || []), ...newImages];
 
         const {films, ...planetData} = planet
@@ -163,9 +173,9 @@ export class PlanetsController {
         })
 
 
-        await Promise.all(images.map(async (image) => {
+        await Promise.all(images.map((image) => {
                 try {
-                    await fsPromise.unlink(Path.join(this.baseImagePath, image));
+                    this.filesService.remove(image);
                 } catch (e) {
                     console.error(e)
                 }
@@ -192,7 +202,7 @@ export class PlanetsController {
         }
 
         res.set('Content-Type', 'image/jpeg');
-        const fileStream = createReadStream(Path.join(this.baseImagePath, image))
+        const fileStream = await this.filesService.getStream(image)
         return new StreamableFile(fileStream)
     }
 }

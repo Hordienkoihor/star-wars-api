@@ -5,11 +5,11 @@ import {DatabaseModule} from "../database/database.module";
 import {HttpModule} from "@nestjs/axios";
 import {filmsProviders} from "./films.providers";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
-import {FilesService} from "../files/files.service";
+import {FilesModule} from "../files/files.module";
 
 @Module({
-  imports: [DatabaseModule, HttpModule],
-  providers: [FilmsService, ...filmsProviders, JwtAuthGuard, FilesService],
+  imports: [DatabaseModule, HttpModule, FilesModule],
+  providers: [FilmsService, ...filmsProviders, JwtAuthGuard],
   controllers: [FilmsController],
   exports: [FilmsService],
 })

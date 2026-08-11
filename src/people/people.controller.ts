@@ -23,12 +23,13 @@ import {createReadStream, existsSync} from 'fs'
 import {ImageValidationPipe} from "../pipes/ImageValidationPipe";
 import * as fs from "node:fs";
 import {multerConfig} from "../multer/multer-config.helper";
+import {FilesService} from "../files/files.service";
 
 @Controller('people')
 export class PeopleController {
     private readonly baseImagePath = './uploads'
 
-    constructor(private readonly peopleService: PeopleService) {
+    constructor(private readonly peopleService: PeopleService, private readonly fileService: FilesService) {
     }
 
     @Get()
@@ -74,7 +75,7 @@ export class PeopleController {
     }
 
     @Post()
-    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
+    @UseInterceptors(FilesInterceptor('files', 10))
     async create(@Body() people: CreatePeopleDto, @UploadedFiles(
         new ParseFilePipeBuilder()
             .addFileTypeValidator({
@@ -88,7 +89,14 @@ export class PeopleController {
         ImageValidationPipe
     ) files: Array<Express.Multer.File>) {
 
-        people.imgs = files?.map(file => file.filename) || [];
+        if (files && files.length > 0) {
+            people.imgs = await Promise.all(
+                files.map(file => this.fileService.upload(file.originalname, file.buffer))
+            );
+        } else {
+            people.imgs = [];
+        }
+
         return await this.peopleService.add(people)
     }
 
@@ -103,7 +111,7 @@ export class PeopleController {
     }
 
     @Patch(':id/images')
-    @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
+    @UseInterceptors(FilesInterceptor('files', 10))
     async appendImages(@Param('id') id: number, @UploadedFiles(new ParseFilePipeBuilder()
         .addFileTypeValidator({
             fileType: /^image\/(png|jpeg)$/,
@@ -117,14 +125,16 @@ export class PeopleController {
         const person = await this.peopleService.get(id)
 
         if (!person) {
-            files?.forEach((file: Express.Multer.File) => {
-                fs.unlinkSync(file.path);
-            })
-
             throw new NotFoundException('No such person found');
         }
 
-        const newImages = files?.map(file => file.filename) || [];
+        let newImages: string[] = [];
+        if (files && files.length > 0) {
+            newImages = await Promise.all(
+                files.map(file => this.fileService.upload(file.originalname, file.buffer))
+            );
+        }
+
 
         person.imgs = [...(person.imgs || []), ...newImages];
 
@@ -151,7 +161,6 @@ export class PeopleController {
 
         }
 
-
         if (!person.imgs) {
             throw new NotFoundException('Person object has not images property');
         }
@@ -175,9 +184,9 @@ export class PeopleController {
             films: films ? films.map((f) => f.id) : [],
         })
 
-        await Promise.all(images.map(async (image) => {
+        await Promise.all(images.map((image) => {
                 try {
-                    await fsPromise.unlink(Path.join(this.baseImagePath, image));
+                    this.fileService.remove(image);
                 } catch (e) {
                     console.error(e)
                 }
@@ -204,7 +213,7 @@ export class PeopleController {
         }
 
         res.set('Content-Type', 'image/jpeg');
-        const fileStream = createReadStream(Path.join(this.baseImagePath, image))
+        const fileStream = await this.fileService.getStream(image)
         return new StreamableFile(fileStream)
     }
 }

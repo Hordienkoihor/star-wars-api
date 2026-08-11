@@ -4,9 +4,10 @@ import { PlanetsController } from './planets.controller';
 import {platensProviders} from "./platens.providers";
 import {DatabaseModule} from "../database/database.module";
 import {HttpModule} from "@nestjs/axios";
+import {FilesModule} from "../files/files.module";
 
 @Module({
-  imports: [DatabaseModule, HttpModule],
+  imports: [DatabaseModule, HttpModule, FilesModule],
   providers: [PlanetsService, ...platensProviders],
   controllers: [PlanetsController],
   exports: [PlanetsService],
