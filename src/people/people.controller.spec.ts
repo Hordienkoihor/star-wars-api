@@ -1,14 +1,15 @@
-import {Test, TestingModule} from '@nestjs/testing';
-import {FilmsController} from './films.controller';
-import {FilmsService} from "./films.service";
+import {PeopleController} from "./people.controller";
+import {PeopleService} from "./people.service";
+import {Test, TestingModule} from "@nestjs/testing";
+import {CreatePeopleDto} from "./model/people.dto";
 import {FilesService} from "../files/files.service";
-import {CreateFilmDto} from "./model/film.dto";
 
-describe('FilmsController', () => {
-    let controller: FilmsController;
-    let service: FilmsService;
 
-    const mockFilmService = {
+describe('PeopleController', () => {
+    let controller: PeopleController;
+    let service: PeopleService;
+
+    const mockPeopleService = {
         getAll: jest.fn().mockResolvedValue([{id: 1, title: 'Smth'}]),
         findOne: jest.fn().mockImplementation((id: string) => Promise.resolve({id, title: 'Smth'})),
         add: jest.fn().mockImplementation((dto) => Promise.resolve({id: 1, ...dto})),
@@ -17,16 +18,16 @@ describe('FilmsController', () => {
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
-            controllers: [FilmsController],
+            controllers: [PeopleController],
             providers: [
-                {provide: FilmsService, useValue: mockFilmService,},
-                {provide: FilesService, useValue: {}},
+                {provide: PeopleService, useValue: mockPeopleService,},
+                { provide: FilesService, useValue: {} }
             ],
 
         }).compile();
 
-        controller = module.get<FilmsController>(FilmsController);
-        service = module.get<FilmsService>(FilmsService);
+        controller = module.get<PeopleController>(PeopleController);
+        service = module.get<PeopleService>(PeopleService);
     });
 
     it('should be defined', () => {
@@ -34,8 +35,8 @@ describe('FilmsController', () => {
     });
 
     describe('getAll', () => {
-        it('should return an array of films', async () => {
-            const result = await controller.getAll()
+        it('should return an array of people', async () => {
+            const result = await controller.getAllPeople()
 
             expect(result).toEqual([{id: 1, title: 'Smth'}]);
             expect(service.getAll).toHaveBeenCalled()
@@ -43,10 +44,10 @@ describe('FilmsController', () => {
     })
 
     describe('findOne', () => {
-        it('should return a film with specified id', async () => {
+        it('should return a people with specified id', async () => {
             const name = "Dovbush"
 
-            const result = await controller.getForPage(name, 0, 0)
+            const result = await controller.getForPage(name, '0', '0')
 
             expect(result).toEqual({id: 1, title: 'Dovbush'});
             expect(service.search).toHaveBeenCalled()
@@ -54,23 +55,26 @@ describe('FilmsController', () => {
     })
 
     describe('create', () => {
-        it('should return a passed film', async () => {
-            const testFilm: CreateFilmDto = {
+        it('should return a passed person', async () => {
+            const testFilm: CreatePeopleDto = {
+                birth_year: "",
                 created: "",
-                director: "",
                 edited: "",
-                episode_id: 0,
+                eye_color: "",
+                films: [],
+                gender: "",
+                hair_color: "",
+                height: "",
+                homeworld: 0,
                 imgs: [],
-                opening_crawl: "",
-                producer: "",
-                release_date: "",
-                url: "",
-                title: 'Avatar',
-                characters: [],
-                planets: [],
+                mass: "",
+                name: "John",
+                skin_color: "",
                 species: [],
                 starships: [],
+                url: "",
                 vehicles: []
+
 
             }
 
@@ -80,7 +84,7 @@ describe('FilmsController', () => {
                 id: 1,
                 ...testFilm
             })
+        })
     })
-})
 })
 ;

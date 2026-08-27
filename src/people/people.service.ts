@@ -140,6 +140,10 @@ export class PeopleService {
     }
 
     async update(id: number, people: CreatePeopleDto) {
+        if (!people) {
+            throw new TypeError("People dto is required");
+        }
+
         const {films, species, vehicles, starships, homeworld, ...personData} = people;
 
         const person = this.peopleRepository.create({
