@@ -33,9 +33,9 @@ export class PlanetsController {
 
     @Get()
     async getForPage(
-        @Query('search') name: string,
-        @Query('offset') offset: number,
-        @Query('limit') limit: number
+        @Query('search') name?: string,
+        @Query('offset') offset?: number,
+        @Query('limit') limit?: number
     ) {
         const parsedOffset = offset ? +offset : undefined;
         const parsedLimit = limit ? +limit : undefined;
