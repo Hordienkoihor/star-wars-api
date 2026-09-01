@@ -3,14 +3,14 @@ import {Like, Repository} from "typeorm";
 import {Species} from "../species/model/species.entity";
 import {HttpService} from "@nestjs/axios";
 import {Starship} from "./model/starship.entity";
-import {CreateStarshipDto} from "./model/starship.dto";
+import {CreateStarShipDto} from "./model/starship.dto";
 
 @Injectable()
 export class StarshipsService {
     constructor(@Inject('STARSHIP_REPOSITORY') private readonly starshipRepository: Repository<Starship>, private readonly httpService: HttpService) {
     }
 
-    async add(starshipDto: CreateStarshipDto) {
+    async add(starshipDto: CreateStarShipDto) {
         if (!starshipDto) {
             throw new BadRequestException("empty starship dto");
         }
@@ -66,7 +66,7 @@ export class StarshipsService {
         })
     }
 
-    async update(id: number, starshipDto: CreateStarshipDto) {
+    async update(id: number, starshipDto: CreateStarShipDto) {
         if (!starshipDto) {
             throw new BadRequestException("empty starship dto");
         }

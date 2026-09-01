@@ -2,7 +2,7 @@ import {IsArray, IsInt, IsISO8601, IsNotEmpty, IsNumber, IsNumberString, IsOptio
 import {Transform, Type} from "class-transformer";
 import {ApiProperty} from "@nestjs/swagger";
 
-export class CreateStarshipDto {
+export class CreateStarShipDto {
     @ApiProperty()
     @IsString()
     @IsNotEmpty()

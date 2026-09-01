@@ -14,7 +14,7 @@ import {StarshipsService} from "../starships/starships.service";
 import {FilesInterceptor} from "@nestjs/platform-express";
 import {diskStorage} from "multer";
 import {extname} from "path";
-import {CreateStarshipDto} from "../starships/model/starship.dto";
+import {CreateStarShipDto} from "../starships/model/starship.dto";
 import {ImageValidationPipe} from "../pipes/ImageValidationPipe";
 import fs from "node:fs";
 import fsPromise from "fs/promises";
@@ -34,12 +34,12 @@ export class VehiclesController {
 
     @Get()
     async getForPage(
-        @Query('search') name: string,
-        @Query('offset') offset: number,
-        @Query('limit') limit: number
+        @Query('search') name?: string,
+        @Query('offset') offset?: number,
+        @Query('limit') limit?: number
     ) {
         const parsedLimit = limit ? +limit : undefined;
-        const parsedOffset = offset ? +limit : undefined;
+        const parsedOffset = offset ? +offset : undefined;
 
         if (name) {
             return await this.vehiclesService.search(name, parsedOffset, parsedLimit);
@@ -60,7 +60,7 @@ export class VehiclesController {
     // }
 
     @Get('/all')
-    async getAllPlanets() {
+    async getAllVehicles() {
         return await this.vehiclesService.getAll()
     }
 

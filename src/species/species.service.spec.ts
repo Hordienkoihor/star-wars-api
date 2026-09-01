@@ -42,10 +42,10 @@ describe('SpeciesService', () => {
   });
 
   describe('findAll', () => {
-    it('should return all people', async () => {
-      const films = await service.getAll();
+    it('should return all species', async () => {
+      const species = await service.getAll();
 
-      expect(films).toEqual([{id: 1, title: 'Inception'}]);
+      expect(species).toEqual([{id: 1, title: 'Inception'}]);
     });
   });
 
@@ -82,7 +82,7 @@ describe('SpeciesService', () => {
     })
 
     it('should return a modified species', async () => {
-      const planetId = 1;
+      const speciesId = 1;
 
       const createDto: CreateSpeciesDto = {
         average_height: "",
@@ -103,14 +103,14 @@ describe('SpeciesService', () => {
 
       };
 
-      const result = await service.update(planetId, createDto);
+      const result = await service.update(speciesId, createDto);
 
       expect(mockSpeciesRepository.create).toHaveBeenCalledWith(
-          expect.objectContaining({ id: planetId, name: "Terra" })
+          expect.objectContaining({ id: speciesId, name: "Terra" })
       );
 
       expect(result).toEqual(
-          expect.objectContaining({ id: planetId, name: "Terra" })
+          expect.objectContaining({ id: speciesId, name: "Terra" })
       );
     })
 
@@ -134,16 +134,16 @@ describe('SpeciesService', () => {
   })
 
   describe('get', () => {
-    it('should return planet by specified id', async () => {
-      const planetId = 1;
-      const expectedplanet = {id: planetId, name: 'TestplanetId'};
+    it('should return species by specified id', async () => {
+      const speciesId = 1;
+      const expectedplanet = {id: speciesId, name: 'TestSpeciesId'};
 
       mockSpeciesRepository.findOne.mockResolvedValue(expectedplanet);
 
-      const planet = await service.get(planetId);
+      const planet = await service.get(speciesId);
 
       expect(mockSpeciesRepository.findOne).toHaveBeenCalledWith(
-          expect.objectContaining({where: {id: planetId}})
+          expect.objectContaining({where: {id: speciesId}})
       );
 
       expect(planet).toEqual(expectedplanet);

@@ -20,7 +20,7 @@ import Path from "node:path";
 import type {Response} from "express";
 import {createReadStream, existsSync} from "fs";
 import {StarshipsService} from "./starships.service";
-import {CreateStarshipDto} from "./model/starship.dto";
+import {CreateStarShipDto} from "./model/starship.dto";
 import {multerConfig} from "../multer/multer-config.helper";
 import {Starship} from "./model/starship.entity";
 import {of} from "rxjs";
@@ -34,9 +34,9 @@ export class StarshipsController {
 
     @Get()
     async getForPage(
-        @Query('search') name: string,
-        @Query('offset') offset: number,
-        @Query('limit') limit: number
+        @Query('search') name?: string,
+        @Query('offset') offset?: number,
+        @Query('limit') limit?: number
     ) {
         const parsedOffset = offset ? +offset : undefined;
         const parsedLimit = limit ? +limit : undefined;
@@ -59,7 +59,7 @@ export class StarshipsController {
     // }
 
     @Get('/all')
-    async getAllPlanets() {
+    async getAllStarships() {
         return await this.starshipService.getAll()
     }
 
@@ -70,7 +70,7 @@ export class StarshipsController {
 
     @Post()
     @UseInterceptors(FilesInterceptor('files', 10, multerConfig))
-    async create(@Body() starshipDto: CreateStarshipDto, @UploadedFiles(
+    async create(@Body() starshipDto: CreateStarShipDto, @UploadedFiles(
         new ParseFilePipeBuilder()
             .addFileTypeValidator({
                 fileType: /^image\/(png|jpeg)$/,
@@ -88,7 +88,7 @@ export class StarshipsController {
     }
 
     @Put(':id')
-    async update(@Param('id') id: number, @Body() starshipDto: CreateStarshipDto) {
+    async update(@Param('id') id: number, @Body() starshipDto: CreateStarShipDto) {
         return await this.starshipService.update(id, starshipDto)
     }
 

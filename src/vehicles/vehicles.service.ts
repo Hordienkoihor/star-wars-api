@@ -1,7 +1,7 @@
 import {BadRequestException, Inject, Injectable} from '@nestjs/common';
 import {Like, Repository} from "typeorm";
 import {HttpService} from "@nestjs/axios";
-import {CreateStarshipDto} from "../starships/model/starship.dto";
+import {CreateStarShipDto} from "../starships/model/starship.dto";
 import {Vehicle} from "./model/vehicle.entity";
 import {CreateVehicleDto} from "./model/vehicle.dto";
 
@@ -44,7 +44,7 @@ export class VehiclesService {
     }
 
     async getByName(name: string) {
-        await this.vehiclesRepository.findOne({where: {name}})
+        return await this.vehiclesRepository.findOne({where: {name}})
     }
 
     async getByUrl(url: string) {
