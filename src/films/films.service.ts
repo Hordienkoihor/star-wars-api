@@ -1,15 +1,12 @@
 import {BadRequestException, Inject, Injectable} from '@nestjs/common';
 import {Like, Repository} from "typeorm";
 import {Film} from "./model/film.entity";
-import {HttpService} from "@nestjs/axios";
 import {CreateFilmDto} from "./model/film.dto";
-import {FilesService} from "../files/files.service";
 
 @Injectable()
 export class FilmsService {
     constructor(
-        @Inject('FILM_REPOSITORY') private readonly filmRepository: Repository<Film>,
-        private readonly httpService: HttpService) {
+        @Inject('FILM_REPOSITORY') private readonly filmRepository: Repository<Film>) {
     }
 
     async add(filmDto: CreateFilmDto) {
@@ -61,17 +58,7 @@ export class FilmsService {
     }
 
     async getAll() {
-        return await this.filmRepository.find(
-            //     {
-            //     relations: {
-            //         characters: true,
-            //         species: true,
-            //         vehicles: true,
-            //         starships: true,
-            //         planets: true,
-            //     }
-            // }
-        );
+        return await this.filmRepository.find();
     }
 
     async getSinglePage(offset: number = 0, limit: number = 10) {
