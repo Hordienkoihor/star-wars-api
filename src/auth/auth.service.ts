@@ -20,7 +20,7 @@ export class AuthService {
     async login(user: CreateUserDto) {
         const payload = {username: user.username, password: user.password};
         return {
-            accessToken: this.jwtService.sign(payload),
+            accessToken: this.jwtService.sign(payload, {expiresIn: '6h'}),
         }
     }
 }
