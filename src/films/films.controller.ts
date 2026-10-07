@@ -6,7 +6,7 @@ import {
     Param,
     ParseFilePipeBuilder, Patch,
     Post, Put,
-    Query, Res, StreamableFile,
+    Query, Res, StreamableFile, UnprocessableEntityException,
     UploadedFiles, UseGuards,
     UseInterceptors
 } from '@nestjs/common';
@@ -17,11 +17,10 @@ import {CreateFilmDto} from "./model/film.dto";
 import type {Response} from "express";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 import {FilesService} from "../files/files.service";
+import {Film} from "./model/film.entity";
 
 @Controller('films')
 export class FilmsController {
-    private readonly baseImagePath = './uploads/film'
-
     constructor(private readonly filmService: FilmsService, private readonly fileService: FilesService) {
     }
 
@@ -51,18 +50,6 @@ export class FilmsController {
         return await this.filmService.getAll()
     }
 
-    // @Get()
-    // async search(
-    //     @Query('search') search: string,
-    //     @Query('offset') offset: string,
-    //     @Query('limit') limit: number
-    // ) {
-    //     const parsedOffset = offset ? +offset : undefined;
-    //     const parsedLimit = limit ? +limit : undefined;
-    //
-    //     return await this.filmService.search(search, parsedOffset, parsedLimit)
-    // }
-
     @Get('/:id')
     async getOne(@Param('id') id: number) {
         return await this.filmService.get(id)
@@ -71,7 +58,7 @@ export class FilmsController {
     @Post()
     @UseGuards(JwtAuthGuard)
     @UseInterceptors(FilesInterceptor('files', 10))
-    async create(@Body() film: CreateFilmDto, @UploadedFiles(
+    async create(@Body() filmDto: CreateFilmDto, @UploadedFiles(
         new ParseFilePipeBuilder()
             .addFileTypeValidator({
                 fileType: /^image\/(png|jpeg)$/,
@@ -83,21 +70,20 @@ export class FilmsController {
             }),
         ImageValidationPipe
     ) files: Array<Express.Multer.File>) {
-
         if (files && files.length > 0) {
-            film.imgs = await Promise.all(
+            filmDto.imgs = await Promise.all(
                 files.map(file => this.fileService.upload(file.originalname, file.buffer))
             );
         } else {
-            film.imgs = [];
+            filmDto.imgs = [];
         }
 
-        return await this.filmService.add(film);
+        return await this.filmService.add(filmDto);
     }
 
     @Put(':id')
-    async update(@Param('id') id: number, @Body() film: CreateFilmDto) {
-        return await this.filmService.update(id, film)
+    async update(@Param('id') id: number, @Body() filmDto: CreateFilmDto) {
+        return await this.filmService.update(id, filmDto)
     }
 
     @Delete(':id')
@@ -116,7 +102,6 @@ export class FilmsController {
             errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         }), ImageValidationPipe
     ) files: Array<Express.Multer.File>) {
-
         const film = await this.filmService.get(id)
 
         if (!film) {
@@ -132,14 +117,7 @@ export class FilmsController {
 
         film.imgs = [...(film.imgs || []), ...newImages];
 
-        await this.filmService.update(id, {
-            ...film,
-            characters: film.characters ? film.characters.map(c => c.id) : [],
-            species: film.species ? film.species.map(s => s.id) : [],
-            vehicles: film.vehicles ? film.vehicles.map(v => v.id) : [],
-            starships: film.starships ? film.starships.map(s => s.id) : [],
-            planets: film.planets ? film.planets.map(p => p.id) : [],
-        })
+        await this.filmService.update(id, this.mapToDto(film))
 
         return film;
     }
@@ -164,20 +142,28 @@ export class FilmsController {
         }
 
         film.imgs = film.imgs.filter(name => !images.includes(name));
-        await this.filmService.update(id, {
+        await this.filmService.update(id, this.mapToDto(film))
+
+
+        await Promise.all(images.map(async (image) => {
+                await this.fileService.remove(image)
+            })
+        )
+    }
+
+    private mapToDto(film: Film) {
+        if (!film) {
+            throw new UnprocessableEntityException("No film was passed")
+        }
+
+        return {
             ...film,
             characters: film.characters ? film.characters.map(c => c.id) : [],
             species: film.species ? film.species.map(s => s.id) : [],
             vehicles: film.vehicles ? film.vehicles.map(v => v.id) : [],
             starships: film.starships ? film.starships.map(s => s.id) : [],
             planets: film.planets ? film.planets.map(p => p.id) : [],
-        })
-
-
-        await Promise.all(images.map(async (image) => {
-                this.fileService.remove(image)
-            })
-        )
+        }
     }
 
 
