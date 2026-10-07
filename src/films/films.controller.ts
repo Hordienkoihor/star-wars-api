@@ -12,17 +12,9 @@ import {
 } from '@nestjs/common';
 import {FilmsService} from "./films.service";
 import {FilesInterceptor} from "@nestjs/platform-express";
-import {diskStorage} from "multer";
-import {extname} from "path";
-import {CreatePeopleDto} from "../people/model/people.dto";
 import {ImageValidationPipe} from "../pipes/ImageValidationPipe";
 import {CreateFilmDto} from "./model/film.dto";
-import fs from "node:fs";
-import fsPromise from "fs/promises";
-import Path from "node:path";
 import type {Response} from "express";
-import {createReadStream, existsSync} from "fs";
-import {multerConfig} from "../multer/multer-config.helper";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 import {FilesService} from "../files/files.service";
 
