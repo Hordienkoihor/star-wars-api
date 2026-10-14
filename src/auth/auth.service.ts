@@ -10,7 +10,7 @@ export class AuthService {
 
     async validateUser(username: string, pass: string): Promise<any> {
         const user = await this.usersService.findOne(username);
-        if (user && bcrypt.compareSync(pass, user.password)) {
+        if (user && pass && bcrypt.compareSync(pass, user.password)) {
             const { password, ...result } = user;
             return result;
         }
@@ -18,6 +18,12 @@ export class AuthService {
     }
 
     async login(user: CreateUserDto) {
+        const validatedUser = this.validateUser(user.username, user.password);
+
+        if (!validatedUser) {
+            throw new UnauthorizedException("Invalid Credentials");
+        }
+
         const payload = {username: user.username, password: user.password};
         return {
             accessToken: this.jwtService.sign(payload, {expiresIn: '6h'}),

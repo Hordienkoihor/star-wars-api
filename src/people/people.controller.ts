@@ -13,17 +13,14 @@ import {
 } from "@nestjs/common";
 import {PeopleService} from "./people.service";
 import {CreatePeopleDto} from "./model/people.dto";
-import {FileInterceptor, FilesInterceptor} from "@nestjs/platform-express";
-import {diskStorage} from "multer";
-import {extname} from 'path'
-import * as fsPromise from 'fs/promises'
+import {FilesInterceptor} from "@nestjs/platform-express";
 import type {Response} from "express";
 import * as Path from "node:path";
-import {createReadStream, existsSync} from 'fs'
+import {existsSync} from 'fs'
 import {ImageValidationPipe} from "../pipes/ImageValidationPipe";
-import * as fs from "node:fs";
-import {multerConfig} from "../multer/multer-config.helper";
+
 import {FilesService} from "../files/files.service";
+import {People} from "./model/people.entity";
 
 @Controller('people')
 export class PeopleController {
@@ -51,18 +48,6 @@ export class PeopleController {
 
         return await this.peopleService.getSinglePage();
     }
-
-    // @Get()
-    // async search(
-    //     @Query('search') name: string,
-    //     @Query('offset') offset: string,
-    //     @Query('limit') limit: string
-    // ) {
-    //     const parsedOffset = offset ? +offset : undefined;
-    //     const parsedLimit = limit ? +limit : undefined;
-    //
-    //     return await this.peopleService.search(name, parsedOffset, parsedLimit)
-    // }
 
     @Get('/all')
     async getAllPeople() {
@@ -138,16 +123,7 @@ export class PeopleController {
 
         person.imgs = [...(person.imgs || []), ...newImages];
 
-        const {films, species, vehicles, starships, homeworld, ...personData} = person;
-
-        await this.peopleService.update(id, {
-            ...personData,
-            homeworld: homeworld ? homeworld.id : null,
-            species: species ? species.map((s) => s.id) : [],
-            vehicles: vehicles ? vehicles.map((v) => v.id) : [],
-            starships: starships ? starships.map((s) => s.id) : [],
-            films: films ? films.map((f) => f.id) : [],
-        })
+        await this.peopleService.update(id, this.peopleService.mapPersonToDto(person))
 
         return person;
     }
@@ -173,16 +149,7 @@ export class PeopleController {
 
         person.imgs = person.imgs.filter(name => !images.includes(name));
 
-        const {films, species, vehicles, starships, homeworld, ...personData} = person;
-
-        await this.peopleService.update(id, {
-            ...personData,
-            homeworld: homeworld ? homeworld.id : null,
-            species: species ? species.map((s) => s.id) : [],
-            vehicles: vehicles ? vehicles.map((v) => v.id) : [],
-            starships: starships ? starships.map((s) => s.id) : [],
-            films: films ? films.map((f) => f.id) : [],
-        })
+        await this.peopleService.update(id, this.peopleService.mapPersonToDto(person))
 
         await Promise.all(images.map((image) => {
                 try {
@@ -193,7 +160,6 @@ export class PeopleController {
             })
         )
     }
-
 
     @Get(':id/images/:name')
     async getImage(@Param('id') id: number, @Param('name') image: string, @Res({passthrough: true}) res: Response) {
