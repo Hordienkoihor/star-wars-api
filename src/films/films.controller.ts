@@ -4,7 +4,7 @@ import {
     Controller, Delete,
     Get, HttpStatus, NotFoundException,
     Param,
-    ParseFilePipeBuilder, Patch,
+    ParseFilePipeBuilder, ParseIntPipe, Patch,
     Post, Put,
     Query, Res, StreamableFile,
     UploadedFiles, UseGuards,
@@ -50,8 +50,8 @@ export class FilmsController {
     }
 
     @Get('/:id')
-    async getOne(@Param('id') id: number) {
-        return await this.filmService.get(id)
+    async getOne(@Param('id', ParseIntPipe) id: number) {
+        return await this.filmService.findById(id)
     }
 
     @Post()
@@ -81,18 +81,18 @@ export class FilmsController {
     }
 
     @Put(':id')
-    async update(@Param('id') id: number, @Body() filmDto: CreateFilmDto) {
+    async update(@Param('id', ParseIntPipe) id: number, @Body() filmDto: CreateFilmDto) {
         return await this.filmService.update(id, filmDto)
     }
 
     @Delete(':id')
-    async delete(@Param('id') id: number) {
+    async delete(@Param('id', ParseIntPipe) id: number) {
         return await this.filmService.delete(id)
     }
 
     @Patch(':id/images')
     @UseInterceptors(FilesInterceptor('files', 10))
-    async appendImages(@Param('id') id: number, @UploadedFiles(new ParseFilePipeBuilder()
+    async appendImages(@Param('id', ParseIntPipe) id: number, @UploadedFiles(new ParseFilePipeBuilder()
         .addFileTypeValidator({
             fileType: /^image\/(png|jpeg)$/,
             skipMagicNumbersValidation: true
@@ -101,11 +101,7 @@ export class FilmsController {
             errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         }), ImageValidationPipe
     ) files: Array<Express.Multer.File>) {
-        const film = await this.filmService.get(id)
-
-        if (!film) {
-            throw new NotFoundException('No such film found');
-        }
+        const film = await this.filmService.findByIdOrFail(id)
 
         let newImages: string[] = [];
         if (files && files.length > 0) {
@@ -122,13 +118,8 @@ export class FilmsController {
     }
 
     @Delete(':id/images')
-    async removeImages(@Body() images: string[], @Param('id') id: number) {
-        const film = await this.filmService.get(id)
-
-        if (!film) {
-            throw new NotFoundException('No such film found');
-
-        }
+    async removeImages(@Body() images: string[], @Param('id', ParseIntPipe) id: number) {
+        const film = await this.filmService.findByIdOrFail(id)
 
         if (!film.imgs) {
             throw new NotFoundException('film object has not images property');
@@ -152,12 +143,8 @@ export class FilmsController {
 
 
     @Get(':id/images/:name')
-    async getImage(@Param('id') id: number, @Param('name') image: string, @Res({passthrough: true}) res: Response) {
-        const film = await this.filmService.get(id)
-
-        if (!film) {
-            throw new NotFoundException('No such film found');
-        }
+    async getImage(@Param('id', ParseIntPipe) id: number, @Param('name') image: string, @Res({passthrough: true}) res: Response) {
+        const film = await this.filmService.findByIdOrFail(id)
 
         if (!film.imgs || !film.imgs.includes(image)) {
             throw new NotFoundException('No such film found');

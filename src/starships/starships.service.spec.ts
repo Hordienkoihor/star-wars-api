@@ -148,7 +148,7 @@ describe('StarshipsService', () => {
 
             mockSpaceshipRepository.findOne.mockResolvedValue(expectedStarship);
 
-            const starship = await service.get(starshipId);
+            const starship = await service.getById(starshipId);
 
             expect(mockSpaceshipRepository.findOne).toHaveBeenCalledWith(
                 expect.objectContaining({where: {id: starshipId}})

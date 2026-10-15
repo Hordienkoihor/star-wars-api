@@ -19,8 +19,18 @@ export class StarshipsService {
         return await this.starshipRepository.save(starship);
     }
 
-    async get(id: number) {
+    async findById(id: number) {
         return await this.starshipRepository.findOne({
+            where: {id},
+            relations: {
+                pilots: true,
+                films: true,
+            }
+        })
+    }
+
+    async findByIdOrFail(id: number) {
+        return await this.starshipRepository.findOneOrFail({
             where: {id},
             relations: {
                 pilots: true,

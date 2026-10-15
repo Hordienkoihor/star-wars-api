@@ -18,8 +18,21 @@ export class FilmsService {
         return await this.filmRepository.save(film);
     }
 
-    async get(id: number) {
+    async findById(id: number) {
         return await this.filmRepository.findOne({
+            where: {id},
+            relations: {
+                characters: true,
+                species: true,
+                vehicles: true,
+                starships: true,
+                planets: true,
+            }
+        })
+    }
+
+    async findByIdOrFail(id: number) {
+        return await this.filmRepository.findOneOrFail({
             where: {id},
             relations: {
                 characters: true,

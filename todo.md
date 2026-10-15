@@ -1,0 +1,1 @@
+* change img removing logic to support s3 in controllers other than films

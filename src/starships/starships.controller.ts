@@ -4,7 +4,7 @@ import {
     Controller, Delete,
     Get, HttpStatus, NotFoundException,
     Param,
-    ParseFilePipeBuilder, Patch,
+    ParseFilePipeBuilder, ParseIntPipe, Patch,
     Post, Put,
     Query, Res, StreamableFile,
     UploadedFiles,
@@ -52,8 +52,8 @@ export class StarshipsController {
     }
 
     @Get(':id')
-    async getOne(@Param('id') id: number) {
-        return await this.starshipService.get(id)
+    async getOne(@Param('id', ParseIntPipe) id: number) {
+        return await this.starshipService.findById(id)
     }
 
     @Post()
@@ -76,12 +76,12 @@ export class StarshipsController {
     }
 
     @Put(':id')
-    async update(@Param('id') id: number, @Body() starshipDto: CreateStarShipDto) {
+    async update(@Param('id', ParseIntPipe) id: number, @Body() starshipDto: CreateStarShipDto) {
         return await this.starshipService.update(id, starshipDto)
     }
 
     @Delete(':id')
-    async delete(@Param('id') id: number) {
+    async delete(@Param('id', ParseIntPipe) id: number) {
         return await this.starshipService.delete(id)
     }
 
@@ -96,8 +96,7 @@ export class StarshipsController {
             errorHttpStatusCode: HttpStatus.UNPROCESSABLE_ENTITY,
         }), ImageValidationPipe
     ) files: Array<Express.Multer.File>) {
-
-        const starship = await this.starshipService.get(id)
+        const starship = await this.starshipService.findById(id)
 
         if (!starship) {
             files?.forEach((file: Express.Multer.File) => {
@@ -117,13 +116,7 @@ export class StarshipsController {
 
     @Delete(':id/images')
     async removeImages(@Body() images: string[], @Param('id') id: number) {
-        const starship = await this.starshipService.get(id)
-
-        if (!starship) {
-            throw new NotFoundException('No such starship found');
-
-        }
-
+        const starship = await this.starshipService.findByIdOrFail(id)
 
         if (!starship.imgs) {
             throw new NotFoundException('starship object has not images property');
@@ -139,7 +132,6 @@ export class StarshipsController {
 
         await this.starshipService.update(id, this.starshipService.mapStarshipToDto(starship))
 
-
         await Promise.all(images.map(async (image) => {
                 try {
                     await fsPromise.unlink(Path.join(this.baseImagePath, image));
@@ -153,16 +145,11 @@ export class StarshipsController {
 
     @Get(':id/images/:name')
     async getImage(@Param('id') id: number, @Param('name') image: string, @Res({passthrough: true}) res: Response) {
-        const starship = await this.starshipService.get(id)
-
-        if (!starship) {
-            throw new NotFoundException('No such starship found');
-        }
+        const starship = await this.starshipService.findByIdOrFail(id)
 
         if (!starship.imgs || !starship.imgs.includes(image)) {
             throw new NotFoundException('No such image found');
         }
-
 
         if (!existsSync(Path.join(this.baseImagePath, image))) {
             throw new NotFoundException('Image file is missing on server');

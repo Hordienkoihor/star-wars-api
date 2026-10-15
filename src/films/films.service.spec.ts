@@ -127,7 +127,7 @@ describe('FilmsService', () => {
 
             mockFilmRepository.findOne.mockResolvedValue(expectedFilm);
 
-            const film = await service.get(filmId);
+            const film = await service.findById(filmId);
 
             expect(mockFilmRepository.findOne).toHaveBeenCalledWith(
                 expect.objectContaining({ where: { id: filmId } })
