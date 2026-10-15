@@ -11,8 +11,6 @@ import {
     UseInterceptors
 } from '@nestjs/common';
 import {FilesInterceptor} from "@nestjs/platform-express";
-import {diskStorage} from "multer";
-import {extname} from "path";
 import {ImageValidationPipe} from "../pipes/ImageValidationPipe";
 import fs from "node:fs";
 import fsPromise from "fs/promises";
@@ -22,8 +20,6 @@ import {createReadStream, existsSync} from "fs";
 import {StarshipsService} from "./starships.service";
 import {CreateStarShipDto} from "./model/starship.dto";
 import {multerConfig} from "../multer/multer-config.helper";
-import {Starship} from "./model/starship.entity";
-import {of} from "rxjs";
 
 @Controller('starships')
 export class StarshipsController {
@@ -49,14 +45,6 @@ export class StarshipsController {
         }
         return await this.starshipService.getSinglePage()
     }
-
-    // @Get()
-    // async search(@Query('search') name: string, @Query('offset') offset?: string, @Query('limit') limit?: string) {
-    //     const parsedOffset = offset ? +offset : undefined;
-    //     const parsedLimit = limit ? +limit : undefined;
-    //
-    //     return this.starshipService.search(name, parsedOffset, parsedLimit);
-    // }
 
     @Get('/all')
     async getAllStarships() {
@@ -120,16 +108,9 @@ export class StarshipsController {
         }
 
         const newImages = files?.map(file => file.filename) || [];
-
         starship.imgs = [...(starship.imgs || []), ...newImages];
 
-        const {pilots, films, ...starshipData} = starship;
-
-        await this.starshipService.update(id, {
-            ...starshipData,
-            pilots: pilots ? pilots.map((p) => p.id) : [],
-            films: films ? films.map((f) => f.id) : [],
-        })
+        await this.starshipService.update(id, this.starshipService.mapStarshipToDto(starship))
 
         return starship;
     }
@@ -155,13 +136,8 @@ export class StarshipsController {
         }
 
         starship.imgs = starship.imgs.filter(name => !images.includes(name));
-        const {pilots, films, ...starshipData} = starship;
 
-        await this.starshipService.update(id, {
-            ...starshipData,
-            pilots: pilots ? pilots.map((p) => p.id) : [],
-            films: films ? films.map((f) => f.id) : [],
-        })
+        await this.starshipService.update(id, this.starshipService.mapStarshipToDto(starship))
 
 
         await Promise.all(images.map(async (image) => {

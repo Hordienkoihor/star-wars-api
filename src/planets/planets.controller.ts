@@ -6,22 +6,18 @@ import {
     Param,
     ParseFilePipeBuilder, Patch,
     Post, Put,
-    Query, Res, StreamableFile,
+    Query, Res, StreamableFile, UnprocessableEntityException,
     UploadedFiles,
     UseInterceptors
 } from '@nestjs/common';
 import {FilesInterceptor} from "@nestjs/platform-express";
-import {diskStorage} from "multer";
-import {extname} from "path";
 import {ImageValidationPipe} from "../pipes/ImageValidationPipe";
 import fs from "node:fs";
-import fsPromise from "fs/promises";
 import Path from "node:path";
 import type {Response} from "express";
-import {createReadStream, existsSync} from "fs";
+import {existsSync} from "fs";
 import {PlanetsService} from "./planets.service";
 import {CreatePlanetDto} from "./model/planet.dto";
-import {multerConfig} from "../multer/multer-config.helper";
 import {FilesService} from "../files/files.service";
 
 @Controller('planets')
@@ -49,18 +45,6 @@ export class PlanetsController {
         }
         return await this.planetService.getSinglePage()
     }
-
-    // @Get()
-    // async search(
-    //     @Query('search') name: string,
-    //     @Query('offset') offset: string,
-    //     @Query('limit') limit: string
-    // ) {
-    //     const parsedOffset = offset ? +offset : undefined;
-    //     const parsedLimit = limit ? +limit : undefined;
-    //
-    //     return await this.planetService.getByName(name, parsedOffset, parsedLimit)
-    // }
 
     @Get('/all')
     async getAllPlanets() {
@@ -136,11 +120,7 @@ export class PlanetsController {
         }
         planet.imgs = [...(planet.imgs || []), ...newImages];
 
-        const {films, ...planetData} = planet
-        await this.planetService.update(id, {
-            ...planetData,
-            films: films ? films.map((f) => f.id) : []
-        })
+        await this.planetService.update(id, this.planetService.mapPlanetToDto(planet))
 
         return planet;
     }
@@ -150,13 +130,12 @@ export class PlanetsController {
         const planet = await this.planetService.get(id)
 
         if (!planet) {
-            throw new NotFoundException('No such planet found');
+            throw new UnprocessableEntityException('No such planet found');
 
         }
 
-
         if (!planet.imgs) {
-            throw new NotFoundException('Planet object has not images property');
+            throw new BadRequestException('Planet object has not images property');
         }
 
         const containsInvalidImage = images.some(imageName => !planet.imgs.includes(imageName));
@@ -166,12 +145,7 @@ export class PlanetsController {
         }
 
         planet.imgs = planet.imgs.filter(name => !images.includes(name));
-        const {films, ...planetData} = planet
-        await this.planetService.update(id, {
-            ...planetData,
-            films: films ? films.map((f) => f.id) : []
-        })
-
+        await this.planetService.update(id, this.planetService.mapPlanetToDto(planet))
 
         await Promise.all(images.map((image) => {
                 try {

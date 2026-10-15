@@ -1,4 +1,4 @@
-import {BadRequestException, Inject, Injectable} from '@nestjs/common';
+import {BadRequestException, Inject, Injectable, UnprocessableEntityException} from '@nestjs/common';
 import {Like, Repository} from "typeorm";
 import {Film} from "./model/film.entity";
 import {CreateFilmDto} from "./model/film.dto";
@@ -14,16 +14,7 @@ export class FilmsService {
             throw new BadRequestException("empty film dto");
         }
 
-        const {characters, species, vehicles, starships, planets, ...filmData} = filmDto;
-
-        const film = this.filmRepository.create({
-            ...filmData,
-            characters: characters ? characters.map((id) => ({id: Number(id)})) : [],
-            species: species ? species.map((id) => ({id: Number(id)})) : [],
-            vehicles: vehicles ? vehicles.map((id) => ({id: Number(id)})) : [],
-            planets: planets ? planets.map((id) => ({id: Number(id)})) : [],
-            starships: starships ? starships.map((id) => ({id: Number(id)})) : [],
-        });
+        const film = this.filmRepository.create(this.unwrapDto(filmDto));
         return await this.filmRepository.save(film);
     }
 
@@ -80,16 +71,9 @@ export class FilmsService {
             throw new BadRequestException("empty film dto");
         }
 
-        const {characters, species, vehicles, starships, planets, ...filmData} = filmDto;
-
         const film = this.filmRepository.create({
             id: id,
-            ...filmData,
-            characters: characters ? characters.map((id) => ({id: Number(id)})) : [],
-            species: species ? species.map((id) => ({id: Number(id)})) : [],
-            vehicles: vehicles ? vehicles.map((id) => ({id: Number(id)})) : [],
-            planets: planets ? planets.map((id) => ({id: Number(id)})) : [],
-            starships: starships ? starships.map((id) => ({id: Number(id)})) : [],
+            ...this.unwrapDto(filmDto)
         });
 
         return await this.filmRepository.save(film);
@@ -98,4 +82,34 @@ export class FilmsService {
     async delete(id: number) {
         return await this.filmRepository.delete(id);
     }
+
+    mapFilmToDto(film: Film) {
+        if (!film) {
+            throw new UnprocessableEntityException("No film was passed")
+        }
+
+        return {
+            ...film,
+            characters: film.characters ? film.characters.map(c => c.id) : [],
+            species: film.species ? film.species.map(s => s.id) : [],
+            vehicles: film.vehicles ? film.vehicles.map(v => v.id) : [],
+            starships: film.starships ? film.starships.map(s => s.id) : [],
+            planets: film.planets ? film.planets.map(p => p.id) : [],
+        }
+    }
+
+    private unwrapDto(dto: CreateFilmDto) {
+        const {characters, species, vehicles, starships, planets, ...filmData} = dto;
+
+
+        return {
+            ...filmData,
+            characters: characters ? characters.map((id) => ({id: Number(id)})) : [],
+            species: species ? species.map((id) => ({id: Number(id)})) : [],
+            vehicles: vehicles ? vehicles.map((id) => ({id: Number(id)})) : [],
+            planets: planets ? planets.map((id) => ({id: Number(id)})) : [],
+            starships: starships ? starships.map((id) => ({id: Number(id)})) : [],
+        }
+    }
+
 }

@@ -14,12 +14,7 @@ export class PlanetsService {
             throw new BadRequestException("empty planet dto");
         }
 
-        const {films, ...planetData} = planetDto;
-
-        const planet = this.planetRepository.create({
-            ...planetData,
-            films: films ? films.map((id) => ({id: Number(id)})) : []
-        });
+        const planet = this.planetRepository.create(this.unwrapDto(planetDto));
 
         return await this.planetRepository.save(planet);
     }
@@ -61,12 +56,9 @@ export class PlanetsService {
             throw new BadRequestException("empty planet dto");
         }
 
-        const {films, ...planetData} = planetDto;
-
         const planet = this.planetRepository.create({
             id: id,
-            ...planetData,
-            films: films ? films.map((id) => ({id: Number(id)})) : []
+            ...this.unwrapDto(planetDto),
         });
 
         return await this.planetRepository.save(planet);
@@ -74,5 +66,23 @@ export class PlanetsService {
 
     async delete(id: number) {
         return await this.planetRepository.delete(id);
+    }
+
+    unwrapDto(dto: CreatePlanetDto) {
+        const {films, ...planetData} = dto;
+
+        return {
+            ...planetData,
+            films: films ? films.map((id) => ({id: Number(id)})) : []
+        }
+    }
+
+    mapPlanetToDto(planet: Planet) {
+        const {films, ...planetData} = planet
+
+        return {
+        ...planetData,
+            films: films ? films.map((f) => f.id) : []
+        }
     }
 }

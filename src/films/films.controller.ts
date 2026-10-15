@@ -6,7 +6,7 @@ import {
     Param,
     ParseFilePipeBuilder, Patch,
     Post, Put,
-    Query, Res, StreamableFile, UnprocessableEntityException,
+    Query, Res, StreamableFile,
     UploadedFiles, UseGuards,
     UseInterceptors
 } from '@nestjs/common';
@@ -17,7 +17,6 @@ import {CreateFilmDto} from "./model/film.dto";
 import type {Response} from "express";
 import {JwtAuthGuard} from "../auth/jwt-auth.guard";
 import {FilesService} from "../files/files.service";
-import {Film} from "./model/film.entity";
 
 @Controller('films')
 export class FilmsController {
@@ -117,7 +116,7 @@ export class FilmsController {
 
         film.imgs = [...(film.imgs || []), ...newImages];
 
-        await this.filmService.update(id, this.mapToDto(film))
+        await this.filmService.update(id, this.filmService.mapFilmToDto(film))
 
         return film;
     }
@@ -142,28 +141,13 @@ export class FilmsController {
         }
 
         film.imgs = film.imgs.filter(name => !images.includes(name));
-        await this.filmService.update(id, this.mapToDto(film))
+        await this.filmService.update(id, this.filmService.mapFilmToDto(film))
 
 
         await Promise.all(images.map(async (image) => {
                 await this.fileService.remove(image)
             })
         )
-    }
-
-    private mapToDto(film: Film) {
-        if (!film) {
-            throw new UnprocessableEntityException("No film was passed")
-        }
-
-        return {
-            ...film,
-            characters: film.characters ? film.characters.map(c => c.id) : [],
-            species: film.species ? film.species.map(s => s.id) : [],
-            vehicles: film.vehicles ? film.vehicles.map(v => v.id) : [],
-            starships: film.starships ? film.starships.map(s => s.id) : [],
-            planets: film.planets ? film.planets.map(p => p.id) : [],
-        }
     }
 
 

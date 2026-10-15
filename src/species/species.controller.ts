@@ -6,13 +6,11 @@ import {
     Param,
     ParseFilePipeBuilder, Patch,
     Post, Put,
-    Query, Res, StreamableFile,
+    Query, Res, StreamableFile, UnprocessableEntityException,
     UploadedFiles,
     UseInterceptors
 } from '@nestjs/common';
 import {FilesInterceptor} from "@nestjs/platform-express";
-import {diskStorage} from "multer";
-import {extname} from "path";
 import {ImageValidationPipe} from "../pipes/ImageValidationPipe";
 import fs from "node:fs";
 import fsPromise from "fs/promises";
@@ -48,18 +46,6 @@ export class SpeciesController {
         }
         return await this.speciesService.getSinglePage()
     }
-
-    // @Get()
-    // async search(
-    //     @Query('search') name: string,
-    //     @Query('offset') offset?: string,
-    //     @Query('limit') limit?: string
-    // ) {
-    //     const parsedOffset = offset ? +offset : undefined;
-    //     const parsedLimit = limit ? +limit : undefined;
-    //
-    //     return this.speciesService.search(name, parsedOffset, parsedLimit)
-    // }
 
     @Get('/all')
     async getAllSpecies() {
@@ -123,17 +109,9 @@ export class SpeciesController {
         }
 
         const newImages = files?.map(file => file.filename) || [];
-
         species.imgs = [...(species.imgs || []), ...newImages];
 
-        const {people, films, homeworld, ...speciesData} = species
-
-        await this.speciesService.update(id, {
-            ...speciesData,
-            homeworld: homeworld ? homeworld.id : null,
-            films: films ? films.map((f) => f.id) : [],
-            people: people ? people.map((p) => p.id) : []
-        })
+        await this.speciesService.update(id, this.speciesService.mapSpeciesToDto(species))
 
         return species;
     }
@@ -160,15 +138,7 @@ export class SpeciesController {
 
         species.imgs = species.imgs.filter(name => !images.includes(name));
 
-        const {people, films, homeworld, ...speciesData} = species
-
-        await this.speciesService.update(id, {
-            ...speciesData,
-            homeworld: homeworld ? homeworld.id : null,
-            films: films ? films.map((f) => f.id) : [],
-            people: people ? people.map((p) => p.id) : []
-        })
-
+        await this.speciesService.update(id, this.speciesService.mapSpeciesToDto(species))
 
         await Promise.all(images.map(async (image) => {
                 try {
@@ -186,7 +156,7 @@ export class SpeciesController {
         const species = await this.speciesService.get(id)
 
         if (!species) {
-            throw new NotFoundException('No such species found');
+            throw new UnprocessableEntityException('No such species found');
         }
 
         if (!species.imgs || !species.imgs.includes(image)) {

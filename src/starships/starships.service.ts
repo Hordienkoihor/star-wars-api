@@ -15,13 +15,7 @@ export class StarshipsService {
             throw new BadRequestException("empty starship dto");
         }
 
-        const {pilots, films, ...starshipData} = starshipDto;
-
-        const starship = this.starshipRepository.create({
-            ...starshipData,
-            pilots: pilots ? pilots.map((id) => ({id: Number(id)})) : [],
-            films: films ? films.map((id) => ({id: Number(id)})) : [],
-        });
+        const starship = this.starshipRepository.create(this.unwrapDto(starshipDto));
         return await this.starshipRepository.save(starship);
     }
 
@@ -71,13 +65,9 @@ export class StarshipsService {
             throw new BadRequestException("empty starship dto");
         }
 
-        const {pilots, films, ...starshipData} = starshipDto;
-
         const starship = this.starshipRepository.create({
             id: id,
-            ...starshipData,
-            pilots: pilots ? pilots.map((id) => ({id: Number(id)})) : [],
-            films: films ? films.map((id) => ({id: Number(id)})) : [],
+            ...this.unwrapDto(starshipDto),
         });
 
 
@@ -86,5 +76,25 @@ export class StarshipsService {
 
     async delete(id: number) {
         return await this.starshipRepository.delete(id);
+    }
+
+    mapStarshipToDto(starship: Starship) {
+        const {pilots, films, ...starshipData} = starship;
+
+        return {
+            ...starshipData,
+            pilots: pilots ? pilots.map((p) => p.id) : [],
+            films: films ? films.map((f) => f.id) : [],
+        }
+    }
+
+    unwrapDto(dto: CreateStarShipDto) {
+        const {pilots, films, ...starshipData } = dto
+
+        return {
+            ...starshipData,
+            pilots: pilots ? pilots.map((id) => ({id: Number(id)})) : [],
+            films: films ? films.map((id) => ({id: Number(id)})) : [],
+        }
     }
 }

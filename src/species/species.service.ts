@@ -1,8 +1,6 @@
 import {BadRequestException, Inject, Injectable} from '@nestjs/common';
 import {Like, Repository} from "typeorm";
-import {Planet} from "../planets/model/planet.entity";
 import {HttpService} from "@nestjs/axios";
-import {CreatePlanetDto} from "../planets/model/planet.dto";
 import {Species} from "./model/species.entity";
 import {CreateSpeciesDto} from "./model/species.dto";
 
@@ -16,14 +14,7 @@ export class SpeciesService {
             throw new BadRequestException("empty species dto");
         }
 
-        const {films, people, homeworld, ...speciesData} = speciesDto;
-
-        const species = this.speciesRepository.create({
-            ...speciesData,
-            homeworld: homeworld ? {id: Number(homeworld)} : undefined,
-            people: people ? people.map((id) => ({id: Number(id)})) : [],
-            films: films ? films.map((id) => ({id: Number(id)})) : [],
-        });
+        const species = this.speciesRepository.create(this.unwrapDto(speciesDto));
         return await this.speciesRepository.save(species);
     }
 
@@ -73,14 +64,9 @@ export class SpeciesService {
             throw new BadRequestException("empty species dto");
         }
 
-        const {films, people, homeworld, ...speciesData} = speciesDto;
-
         const species = this.speciesRepository.create({
             id: id,
-            ...speciesData,
-            homeworld: homeworld ? {id: Number(homeworld)} : undefined,
-            people: people ? people.map((id) => ({id: Number(id)})) : [],
-            films: films ? films.map((id) => ({id: Number(id)})) : [],
+            ...this.unwrapDto(speciesDto),
         });
 
         return await this.speciesRepository.save(species);
@@ -90,4 +76,27 @@ export class SpeciesService {
     async delete(id: number) {
         return await this.speciesRepository.delete(id);
     }
+
+    mapSpeciesToDto(species: Species) {
+        const {films, people, homeworld, ...speciesData} = species;
+
+        return {
+            ...speciesData,
+            homeworld: homeworld ? homeworld.id : null,
+            films: films ? films.map((f) => f.id) : [],
+            people: people ? people.map((p) => p.id) : []
+        }
+    }
+
+    unwrapDto(dto: CreateSpeciesDto) {
+        const {films, people, homeworld, ...speciesData} = dto;
+
+        return {
+            ...speciesData,
+            homeworld: homeworld ? {id: Number(homeworld)} : undefined,
+            people: people ? people.map((id) => ({id: Number(id)})) : [],
+            films: films ? films.map((id) => ({id: Number(id)})) : [],
+        }
+    }
+
 }
